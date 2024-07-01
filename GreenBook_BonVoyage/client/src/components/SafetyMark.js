@@ -1,0 +1,50 @@
+// SafetyMark.js
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useHistory } from 'react-router-dom';
+
+const SafetyMark = ({ placeId }) => {
+    const [isSafe, setIsSafe] = useState(true);
+    const history = useHistory();
+
+    const handleMarkSafe = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post(`http://localhost:5555/places/${placeId}/mark_safe`, { is_safe: isSafe }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            alert('Place marked successfully');
+            history.push('http://localhost:5555/places');
+        } catch (error) {
+            console.error('Error marking place:', error);
+            alert('Failed to mark place');
+        }
+    };
+
+    return (
+        <div>
+            <h3>Mark this place</h3>
+            <label>
+                <input
+                    type="radio"
+                    value={true}
+                    checked={isSafe === true}
+                    onChange={() => setIsSafe(true)}
+                />
+                Safe
+            </label>
+            <label>
+                <input
+                    type="radio"
+                    value={false}
+                    checked={isSafe === false}
+                    onChange={() => setIsSafe(false)}
+                />
+                Not Safe
+            </label>
+            <button onClick={handleMarkSafe}>Submit</button>
+        </div>
+    );
+};
+
+export default SafetyMark;
