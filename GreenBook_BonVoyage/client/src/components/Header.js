@@ -19,9 +19,9 @@ function Header({  logoutUser }) {
     <header className="header">
       <nav className="nav">
         <ul className="nav-list">
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link to="/">Home</Link>
-          </li>
+          </li> */} 
           <li className="nav-item">
             <Link to="/places">Places</Link>
           </li>

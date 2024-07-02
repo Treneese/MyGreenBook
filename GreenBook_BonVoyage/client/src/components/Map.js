@@ -43,8 +43,8 @@ function Map() {
     <div>
       <ReactMapGL
         {...viewport}
-        mapboxApiAccessToken={
-          'sk.eyJ1IjoidHJlbmVlc2U5NyIsImEiOiJjbHh4dnFsN2ExZDJhMmtwdmtkbDl4dG45In0.vCYN3WxxmO06CZpe_pqHVQ'
+        mapboxAccessToken={
+          'pk.eyJ1IjoidHJlbmVlc2U5NyIsImEiOiJjbHh3aWR6M3Eyc280MmxvZHFlaHR2MnhqIn0.pZ_BsbK0D_2RrErWEX28HA'
         }
         onViewportChange={nextViewport => setViewport(nextViewport)}
         mapStyle="mapbox://styles/mapbox/streets-v11"

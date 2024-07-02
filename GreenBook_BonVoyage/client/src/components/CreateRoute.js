@@ -1,13 +1,13 @@
 // src/components/CreateRoute.js
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
 const CreateRoute = () => {
   const [name, setName] = useState('');
   const [placeIds, setPlaceIds] = useState([]);
   const [places, setPlaces] = useState([]);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -35,7 +35,7 @@ const CreateRoute = () => {
   const handleCreateRoute = async () => {
     try {
       await api.post('http://localhost:5555/api/routes', { name, place_ids: placeIds });
-      history.push('http://localhost:5555/places');
+      navigate.push('http://localhost:5555/places');
     } catch (error) {
       console.error('Error creating route:', error);
     }

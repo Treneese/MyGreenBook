@@ -1,6 +1,6 @@
 // src/components/CreatePlace.js
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';  // Adjust the path based on your directory structure
 
 const CreatePlace = () => {
@@ -8,7 +8,7 @@ const CreatePlace = () => {
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [safetyRating, setSafetyRating] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleCreatePlace = async () => {
     try {
@@ -19,7 +19,7 @@ const CreatePlace = () => {
         safety_rating: parseFloat(safetyRating) 
       });
       if (response.status === 201) {
-        history.push('/places');  // Navigate to the places list page
+        navigate.push('/places');  // Navigate to the places list page
       } else {
         console.error('Unexpected response status:', response.status);
       }

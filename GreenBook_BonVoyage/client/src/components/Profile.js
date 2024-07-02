@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useJwt } from 'react-jwt';
 
 const Profile = () => {
@@ -18,7 +18,7 @@ const Profile = () => {
   // State for error messages
   const [error, setError] = useState('');
   // Hook for navigation
-  const history = useHistory();
+  const navigate = useNavigate();
   // Decoding the JWT token
   const { decodedToken } = useJwt(localStorage.getItem('token'));
 

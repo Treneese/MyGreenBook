@@ -1,24 +1,23 @@
-// src/components/Login.js
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 
 const Login = ({ setUser }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [login, setLogin] = useState(true);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const loginSchema = yup.object().shape({
-    email: yup.string().email('Invalid email format').required('Email is required'),
+    username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required'),
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'email') {
-      setEmail(value);
+    if (name === 'username') {
+      setUsername(value);
     } else if (name === 'password') {
       setPassword(value);
     }
@@ -28,7 +27,7 @@ const Login = ({ setUser }) => {
     e.preventDefault();
 
     try {
-      const isValid = await loginSchema.validate({ email, password });
+      const isValid = await loginSchema.validate({ username, password });
       if (isValid) {
         const endpoint = login ? '/login' : '/register';
         const response = await fetch(endpoint, {
@@ -36,13 +35,13 @@ const Login = ({ setUser }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ username, password }),
         });
 
         if (response.ok) {
           const user = await response.json();
           setUser(user);
-          history.push('/places');
+          navigate('/places');
         } else {
           console.error('Login failed:', response.statusText);
         }
@@ -57,10 +56,10 @@ const Login = ({ setUser }) => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={email}
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={username}
           onChange={handleChange}
         />
         <input
@@ -79,5 +78,8 @@ const Login = ({ setUser }) => {
 };
 
 export default Login;
+
+
+
 
 

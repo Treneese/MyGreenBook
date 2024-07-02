@@ -1,38 +1,49 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Header from './Header';
-import Home from './Home';
+import React, { useState, useEffect } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import './Home.css';
 import Login from './Login';
-import Map from './Map';
 import Register from './Register';
-import PlaceList from './PlaceList';
-import CreatePlace from './CreatePlace';
-import PlaceDetails from './PlaceDetails';
-import CreateRoute from './CreateRoute';
-import Chat from './Chat';
-import Profile from './Profile';
+import Header from './Header';
 
 const App = () => {
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [showRegister, setShowRegister] = useState(false); // New state variable
+  
+  function logoutUser() {
+    setLoggedInUser(null);
+  }
+
+  useEffect(() => {
+    fetch('/check_session')
+      .then((resp) => {
+        if (resp.ok) {
+          resp.json().then(user => setLoggedInUser(user));
+        }
+      });
+  }, []);
+
   return (
-    <Router>
-      <div className="app">
-        <Header />
-        <Switch>
-          {/* Ensure each Route path matches correctly */}
-          <Route exact path="/" component={Home } />
-          <Route path="/login" component={Login } />
-          <Route path="/map" component={Map } />
-          <Route path="/register" component={Register} />
-          <Route exact path="/places" component={PlaceList } />
-          <Route path="/places/new" component={CreatePlace } />
-          <Route path="/places/:placeId" component={PlaceDetails} />
-          <Route path="/routes/new" component={CreateRoute } />
-          <Route path="/chat" component={Chat } />
-          <Route path="/profile" component={Profile } />
-        </Switch>
-      </div>
-    </Router>
+    <div className="home">
+      <Header logoutUser={logoutUser} />
+      <h1>Welcome to the Green Book</h1>
+      <h2>Bon Voyage</h2>
+      <p>Your go-to app for safe route navigation and place finding.</p>
+      {loggedInUser ? (
+        <Outlet />
+      ) : (
+        <>
+          {showRegister ? (
+            <Register setUser={setLoggedInUser} />
+          ) : (
+            <Login setUser={setLoggedInUser} />
+          )}
+          <button onClick={() => setShowRegister(!showRegister)}>
+            {showRegister ? 'Already have an account? Log in' : 'Don’t have an account? Register'}
+          </button>
+        </>
+      )}
+    </div>
   );
-};
+}
 
 export default App;

@@ -1,6 +1,6 @@
 // src/components/Register.js
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 
@@ -9,7 +9,7 @@ const Register = ({ setUser }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
   const [register, setRegister] = useState(true);
 
   const registerSchema = yup.object().shape({
@@ -50,7 +50,7 @@ const Register = ({ setUser }) => {
         if (response.ok) {
           const user = await response.json();
           setUser(user);
-          history.push('/login');
+          navigate.push('/login');
         } else {
           console.error('Registration failed:', response.statusText);
         }
