@@ -3,7 +3,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
 
-const Header = () => {
+function Header({  logoutUser }) {
+ 
+  function handleLogout() {
+      fetch('/logout', {
+          method: 'DELETE'
+      }).then( resp => {
+          if (resp.ok) {
+              // update the state of the user back to a falsey value
+              logoutUser()
+          }
+      })
+  }
   return (
     <header className="header">
       <nav className="nav">
