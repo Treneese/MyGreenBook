@@ -12,7 +12,7 @@ const CreatePlace = () => {
 
   const handleCreatePlace = async () => {
     try {
-      const response = await api.post('/places', { 
+      const response = await api.post('/api/places', { 
         name, 
         city, 
         address, 

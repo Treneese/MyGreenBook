@@ -10,7 +10,6 @@ const Register = ({ setUser }) => {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const navigate = useNavigate();
-  const [register, setRegister] = useState(true);
 
   const registerSchema = yup.object().shape({
     username: yup.string().min(5, 'Username too Short!').max(15, 'Username too Long!').required('Username is required'),
@@ -36,24 +35,22 @@ const Register = ({ setUser }) => {
     e.preventDefault();
 
     try {
-      const isValid = await registerSchema.validate({ username, email, password, passwordConfirmation });
-      if (isValid) {
-        const endpoint = register ? '/register' : '/login';
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, email, password }),
-        });
+      await registerSchema.validate({ username, email, password, passwordConfirmation });
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+        credentials: 'include', // Include credentials for session-based auth
+      });
 
         if (response.ok) {
-          const user = await response.json();
-          setUser(user);
-          navigate.push('/login');
-        } else {
-          console.error('Registration failed:', response.statusText);
-        }
+        const user = await response.json();
+        setUser(user);
+        navigate('/login');
+      } else {
+        console.error('Registration failed:', response.statusText);
       }
     } catch (error) {
       console.error('Validation failed:', error.errors);
@@ -94,8 +91,8 @@ const Register = ({ setUser }) => {
         />
         <button type="submit">Register</button>
       </form>
-      <p>Or Login Here</p>
-      <Link className="Login" to="/login">Login</Link>
+      {/* <p>Or Login Here</p>
+      <Link className="Login" to="/login">Login</Link> */}
     </div>
   );
 };

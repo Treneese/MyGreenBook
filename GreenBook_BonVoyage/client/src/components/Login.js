@@ -27,24 +27,24 @@ const Login = ({ setUser }) => {
     e.preventDefault();
 
     try {
-      const isValid = await loginSchema.validate({ username, password });
-      if (isValid) {
-        const endpoint = login ? '/login' : '/register';
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, password }),
-        });
+      await loginSchema.validate({ username, password });
 
-        if (response.ok) {
-          const user = await response.json();
-          setUser(user);
-          navigate('/places');
-        } else {
-          console.error('Login failed:', response.statusText);
-        }
+      const endpoint = login ? '/api/login' : '/api/register';
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const user = await response.json();
+        setUser(user);
+        navigate('/places');
+      } else {
+        console.error('Login failed:', response.statusText);
       }
     } catch (error) {
       console.error('Validation failed:', error.errors);

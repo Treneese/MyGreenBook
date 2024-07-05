@@ -1,37 +1,54 @@
-// src/components/PlaceList.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import PlaceCard from "./PlaceCard";
+import './PlaceList.css';
 import { Link } from 'react-router-dom';
-import api from '../api';
 
-const PlaceList = () => {
+function PlaceList({ search }) {
   const [places, setPlaces] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPlaces = async () => {
-      try {
-        const response = await api.get('http://localhost:5555/places');
-        setPlaces(response.data);
-      } catch (error) {
-        console.error('Error fetching places:', error);
-      }
-    };
-
-    fetchPlaces();
+    fetch("http://localhost:5555/api/places")
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error("Failed to fetch places");
+        }
+        return resp.json();
+      })
+      .then((data) => setPlaces(data))
+      .catch((error) => setError(error.message));
   }, []);
 
+  function removePlace(placeId) {
+    const filteredPlaces = places.filter((place) => place.id !== placeId);
+    setPlaces(filteredPlaces);
+  }
+
+  const filteredPlaces = places.filter((place) => {
+    const lowercaseSearch = search ? search.toLowerCase() : '';
+    const lowercaseName = place.name ? place.name.toLowerCase() : '';
+    return lowercaseName.includes(lowercaseSearch);
+  });
+
+  const placeCards = filteredPlaces.map((place) => (
+    <PlaceCard key={place.id} place={place} removePlace={removePlace} />
+  ));
+
   return (
-    <div className="place-list">
-      <h2>Places</h2>
+    <div>
+      <h1>Places</h1>
       <Link className='Places' to="/places/new">Add New Place</Link>
-      <ul>
-        {places.map(place => (
-          <li key={place.id}>
-            <Link className='Places' to={`/places/${place.id}`}>{place.name}</Link>
-          </li>
-        ))}
-      </ul>
+      {error && <p>Error: {error}</p>}
+      {placeCards.length === 0 ? (
+        <p>No Places found.</p>
+      ) : (
+        <ul className="cards">
+          {placeCards}
+        </ul>
+      )}
     </div>
   );
-};
+}
+
 
 export default PlaceList;

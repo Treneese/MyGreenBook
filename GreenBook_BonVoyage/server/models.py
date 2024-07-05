@@ -1,18 +1,14 @@
 # Standard library imports
 from datetime import datetime
-# from werkzeug.security import generate_password_hash, check_password_hash
-# from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.associationproxy import association_proxy
 # Remote library imports
-from bcrypt import hashpw, gensalt, checkpw
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
-
-
 
 # Local imports
 from config import db, bcrypt
 
+# Association table for the many-to-many relationship between routes and places
 route_place_association = db.Table('route_place_association',
     db.Column('route_id', db.Integer, db.ForeignKey('routes.id'), primary_key=True),
     db.Column('place_id', db.Integer, db.ForeignKey('places.id'), primary_key=True)
@@ -32,10 +28,9 @@ class User(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    safety_marks = db.relationship('SafetyMark', backref='user_safety', lazy=True)
-    routes = db.relationship('Route', backref='user_route', lazy=True)
-    reviews = db.relationship('Review', backref='user_review', lazy=True)
-
+    safety_marks = db.relationship('SafetyMark', backref='user', lazy=True)
+    routes = db.relationship('Route', backref='user', lazy=True)
+    reviews = db.relationship('Review', backref='user', lazy=True)
 
     @validates('username')
     def validate_username(self, key, username):
@@ -48,33 +43,28 @@ class User(db.Model, SerializerMixin):
         if not email or '@' not in email:
             raise ValueError('Invalid email address')
         return email
-
-
+    
     @property
     def password_hash(self):
         return self._password_hash
 
     @password_hash.setter
     def password_hash(self, password):
-        self._password_hash = hashpw(password.encode('utf-8'), gensalt()).decode('utf-8')
+        self._password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def set_password(self, password):
-        if isinstance(password, str):
-            password = password.encode('utf-8')
-        self.password_hash = hashpw(password, gensalt()).decode('utf-8')
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
-
-    def check_password(self, password):
-        return checkpw(password.encode('utf-8'), self._password_hash.encode('utf-8'))
-
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return f'<User id={self.id} username={self.username} email={self.email}>'
+        return f'<User id={self.id} username={self.username} >'
 
 class Place(db.Model, SerializerMixin):
     __tablename__ = 'places'
 
-    serialize_rules = ('-reviews.place', '-safety_marks.place', '-routes.place')
+    serialize_rules = ('-reviews', '-safety_marks','-routes')
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -82,8 +72,8 @@ class Place(db.Model, SerializerMixin):
     address = db.Column(db.String(200), nullable=False)
     safety_rating = db.Column(db.Float, nullable=False)
 
-    reviews = db.relationship('Review', backref='place_review', lazy=True)
-    safety_marks = db.relationship('SafetyMark', backref='place_safety', lazy=True)
+    reviews = db.relationship('Review', backref='place', lazy=True)
+    safety_marks = db.relationship('SafetyMark', backref='place', lazy=True)
 
     @validates('name', 'city', 'address')
     def validate_string_fields(self, key, value):
@@ -103,7 +93,7 @@ class Place(db.Model, SerializerMixin):
 class Route(db.Model, SerializerMixin):
     __tablename__ = 'routes'
 
-    serialize_rules = ('-places', '-user_route')
+    serialize_rules = ('-places', '-user')
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -111,7 +101,6 @@ class Route(db.Model, SerializerMixin):
     
     places = db.relationship('Place', secondary=route_place_association, backref=db.backref('routes', lazy='dynamic'))
 
-    
     @validates('name')
     def validate_name(self, key, name):
         if not name or len(name) < 3:
@@ -124,7 +113,7 @@ class Route(db.Model, SerializerMixin):
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
 
-    serialize_rules = ('-place_review.reviews', '-user_review.reviews')
+    serialize_rules = ('-place.reviews', '-user.reviews')
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -132,9 +121,6 @@ class Review(db.Model, SerializerMixin):
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-
-    # place = db.relationship("Place", back_populates="reviews")
-    # user = db.relationship("User", back_populates="reviews")
 
     @validates('content')
     def validate_content(self, key, content):
@@ -154,16 +140,13 @@ class Review(db.Model, SerializerMixin):
 class SafetyMark(db.Model, SerializerMixin):
     __tablename__ = 'safetymarks'
 
-    serialize_rules = ('-place_safety.safety_marks', '-user_safety.safety_marks')
+    serialize_rules = ('-place.safety_marks', '-user.safety_marks')
 
     id = db.Column(db.Integer, primary_key=True)
     is_safe = db.Column(db.Boolean, nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-
-    # place = db.relationship("Place", back_populates="safetymarks")
-    # user = db.relationship("User", back_populates="safetymarks")
 
     @validates('is_safe')
     def validate_is_safe(self, key, is_safe):

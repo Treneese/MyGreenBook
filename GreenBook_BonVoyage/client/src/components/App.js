@@ -8,7 +8,12 @@ import Header from './Header';
 const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [showRegister, setShowRegister] = useState(false); // New state variable
-  
+  // const [search, setSearch] = useState("");
+
+  // function handleSearch(searchValue) {
+  //   setSearch(searchValue);
+  // }
+
   function logoutUser() {
     setLoggedInUser(null);
   }

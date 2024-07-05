@@ -10,11 +10,11 @@ const SafetyMark = ({ placeId }) => {
     const handleMarkSafe = async () => {
         const token = localStorage.getItem('token');
         try {
-            await axios.post(`http://localhost:5555/places/${placeId}/mark_safe`, { is_safe: isSafe }, {
+            await axios.post(`http://localhost:5555/api/places/${placeId}/mark_safe`, { is_safe: isSafe }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert('Place marked successfully');
-            navigate.push('http://localhost:5555/places');
+            navigate.push('http://localhost:5555/api/places');
         } catch (error) {
             console.error('Error marking place:', error);
             alert('Failed to mark place');
