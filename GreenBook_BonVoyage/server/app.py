@@ -199,13 +199,23 @@ class Routes(Resource):
         routes = Route.query.all()
         routes_list = [route.to_dict() for route in routes]
         return make_response(routes_list, 200)
-    
+     
     def post(self):
         data = request.json
+        print("Received data:", data)
+        
+        if not data:
+            return make_response({'error': 'No data provided'}, 400)
+        
         if 'name' not in data or 'place_ids' not in data:
             return make_response({'error': 'Missing required fields: name and place_ids'}, 400)
         
-        new_route = Route(name=data['name'])
+        # Assign a default user_id
+        user_id = 1  # Default user_id, change as needed
+        
+        new_route = Route(name=data['name'], user_id=user_id)
+        
+        # Add the new_route to the session before appending places
         db.session.add(new_route)
         
         for place_id in data['place_ids']:
@@ -215,7 +225,7 @@ class Routes(Resource):
         
         try:
             db.session.commit()
-            return make_response(new_route.to_dict()), 201
+            return make_response(jsonify(new_route.to_dict()), 201)
         except SQLAlchemyError as e:
             db.session.rollback()
             return make_response({'error': str(e)}, 400)

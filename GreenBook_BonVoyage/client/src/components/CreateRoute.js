@@ -35,8 +35,8 @@ const CreateRoute = () => {
 
   const handleCreateRoute = async () => {
     try {
-      await api.post('http://localhost:5555/api/routes', { name, place_ids: placeIds });
-      navigate.push('http://localhost:5555/api/places');
+      await api.post('/api/routes', { name, place_ids: placeIds });
+      navigate('/routes');
     } catch (error) {
       console.error('Error creating route:', error);
     }

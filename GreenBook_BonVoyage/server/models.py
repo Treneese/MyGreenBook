@@ -75,6 +75,12 @@ class Place(db.Model, SerializerMixin):
     reviews = db.relationship('Review', backref='place', lazy=True)
     safety_marks = db.relationship('SafetyMark', backref='place', lazy=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+    
     @validates('name', 'city', 'address')
     def validate_string_fields(self, key, value):
         if not value or len(value) < 3:
@@ -101,7 +107,14 @@ class Route(db.Model, SerializerMixin):
     
     places = db.relationship('Place', secondary=route_place_association, backref=db.backref('routes', lazy='dynamic'))
 
-    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'user_id': self.user_id,
+            'places': [place.to_dict() for place in self.places]
+        }
+
     @validates('name')
     def validate_name(self, key, name):
         if not name or len(name) < 3:
