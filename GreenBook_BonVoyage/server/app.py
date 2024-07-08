@@ -331,9 +331,8 @@ class Reviews(Resource):
             content=data['content'],
             rating=data['rating'],
             place_id=data['place_id'],
-            user_id=user_id,
-            user_username=user.username,
-            user_image=user.image
+            user_id=['user_id'],
+           \
         )
         try:
             db.session.add(new_review)

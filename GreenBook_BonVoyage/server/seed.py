@@ -70,24 +70,18 @@ def seed_reviews():
             "rating": 4.7,
             "place_id": 1,
             "user_id": 1,
-            "user_name": "Ayanna",
-            "user_image": "https://example.com/image1.jpg",
         },
         {
             "content": "Amazing experience!",
             "rating": 4.5,
             "place_id": 2,
             "user_id": 2,
-            "user_name": "Zuri",
-            "user_image": "https://example.com/image2.jpg",
         },
         {
             "content": "A must-visit!",
             "rating": 4,
             "place_id": 3,
             "user_id": 3,
-            "user_name": "Ezra",
-            "user_image": "https://example.com/image3.jpg",
         },
     ]
 
@@ -99,8 +93,6 @@ def seed_reviews():
                     rating=review_data["rating"],
                     place_id=review_data["place_id"],
                     user_id=review_data["user_id"],
-                    user_name=review_data["user_name"],
-                    user_image=review_data["user_image"],
                     created_at=datetime.utcnow()
                 )
                 db.session.add(review)
