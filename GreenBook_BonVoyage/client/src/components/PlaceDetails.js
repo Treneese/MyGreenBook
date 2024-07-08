@@ -27,7 +27,7 @@ const PlaceDetails = () => {
   
   const handleDelete = async () => {
     try {
-      await api.delete(`http://localhost:5555/api/places/${placeId}`);
+      await api.delete(`/api/places/${placeId}`);
       navigate('/places'); // Redirect to the list of places after deletion
     } catch (error) {
       console.error('Error deleting place:', error);

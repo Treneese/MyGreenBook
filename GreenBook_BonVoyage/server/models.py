@@ -101,6 +101,7 @@ class Route(db.Model, SerializerMixin):
     
     places = db.relationship('Place', secondary=route_place_association, backref=db.backref('routes', lazy='dynamic'))
 
+    
     @validates('name')
     def validate_name(self, key, name):
         if not name or len(name) < 3:
@@ -108,7 +109,7 @@ class Route(db.Model, SerializerMixin):
         return name 
 
     def __repr__(self):
-        return f'<Route id={self.id} name={self.name} user_id={self.user_id}>'
+        return f'<Route id={self.id} name={self.name} user_id={self.user_id} place_id={self.place_id}>'
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'

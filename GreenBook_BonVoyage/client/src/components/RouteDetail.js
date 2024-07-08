@@ -10,8 +10,8 @@ const RouteDetails = () => {
     useEffect(() => {
         const fetchRoute= async () => {
           try {
-            const response = await api.get(`http://localhost:5555/api/routes/${routeId}`);
-            setPlace(response.data);
+            const response = await api.get(`/api/routes/${routeId}`);
+            setRoute(response.data);
           } catch (error) {
             console.error('Error fetching route details:', error);
           }
@@ -22,8 +22,8 @@ const RouteDetails = () => {
 
       const handleDelete = async () => {
         try {
-          await api.delete(`http://localhost:5555/api/places/${placeId}`);
-          navigate('/places'); // Redirect to the list of places after deletion
+          await api.delete(`/api/routes/${routeId}`);
+          navigate('/routes'); // Redirect to the list of places after deletion
         } catch (error) {
           console.error('Error deleting place:', error);
         }
@@ -40,4 +40,4 @@ const RouteDetails = () => {
   );
 };
 
-export default RouteDetail;
+export default RouteDetails;

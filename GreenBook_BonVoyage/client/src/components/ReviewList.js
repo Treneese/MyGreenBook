@@ -5,7 +5,7 @@ function ReviewList({ placeId }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5555/places/${placeId}/reviews`)
+    fetch(`/places/${placeId}/reviews`)
       .then((resp) => {
         if (!resp.ok) {
           throw new Error("Failed to fetch reviews");

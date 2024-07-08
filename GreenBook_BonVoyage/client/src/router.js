@@ -11,6 +11,7 @@ import CreateRoute from './components/CreateRoute';
 import Chat from './components/Chat';
 import Profile from './components/Profile';
 import RouteList from "./components/RouteList";
+import RouteDetails from "./components/RouteDetail";
 
 const routes = [
     {
@@ -26,6 +27,7 @@ const routes = [
         { path: '/places/:placeId', element: <PlaceDetails /> },
         { path: '/routes', element: <RouteList /> },
         { path: '/routes/new', element: <CreateRoute /> },
+        { path: '/routes/:routeId', element: <RouteDetails /> },
         { path: '/chat', element: <Chat /> },
         { path: '/profile', element: <Profile /> }
       ]

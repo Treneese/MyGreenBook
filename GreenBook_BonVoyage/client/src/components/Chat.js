@@ -24,7 +24,7 @@ const Chat = () => {
     if (message.startsWith('/review')) {
       const [_, content, rating, placeId] = message.split(' ');
       try {
-        const response = await axios.post('http://localhost:5000/api/reviews', {
+        const response = await axios.post('/api/reviews', {
           content,
           rating: parseInt(rating),
           place_id: parseInt(placeId)
@@ -38,7 +38,7 @@ const Chat = () => {
 
   const deleteReview = async (reviewId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/reviews/${reviewId}`, { withCredentials: true });
+      await axios.delete(`/api/reviews/${reviewId}`, { withCredentials: true });
       console.log('Review deleted');
     } catch (error) {
       console.error('Error deleting review:', error);

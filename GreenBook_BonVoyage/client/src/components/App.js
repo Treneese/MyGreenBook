@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import './Home.css';
 import Login from './Login';
 import Register from './Register';
 import Header from './Header';

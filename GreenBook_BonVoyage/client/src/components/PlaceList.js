@@ -8,7 +8,7 @@ function PlaceList({ search }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5555/api/places")
+    fetch("/api/places")
       .then((resp) => {
         if (!resp.ok) {
           throw new Error("Failed to fetch places");

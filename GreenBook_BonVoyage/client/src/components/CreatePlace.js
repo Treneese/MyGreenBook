@@ -19,7 +19,7 @@ const CreatePlace = () => {
         safety_rating: parseFloat(safetyRating) 
       });
       if (response.status === 201) {
-        navigate.push('/places');  // Navigate to the places list page
+        navigate('/places');  // Navigate to the places list page
       } else {
         console.error('Unexpected response status:', response.status);
       }

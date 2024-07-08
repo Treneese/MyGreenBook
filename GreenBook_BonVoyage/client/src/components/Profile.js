@@ -20,16 +20,13 @@ const Profile = () => {
   // Hook for navigation
   const navigate = useNavigate();
   // Decoding the JWT token
-  const { decodedToken } = useJwt(localStorage.getItem('token'));
+;
 
   // Effect for fetching profile data when component mounts
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5555/api/profile', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await axios.get('/api/profile', );
         setProfile(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -70,10 +67,7 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      await axios.put('http://localhost:5555/api/profile', profile, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.put('/api/profile', profile,)
       setIsEditing(false);
       alert('Profile updated successfully');
     } catch (error) {

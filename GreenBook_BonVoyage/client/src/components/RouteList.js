@@ -4,45 +4,46 @@ import RouteCard from './RouteCard';
 import { Link } from 'react-router-dom';
 import api from '../api';
 
-const RouteList = () => {
+function RouteList ({ search }) {
   const [routes, setRoutes] = useState([]);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await api.get('http://localhost:5555/api/routes');
-        setRoutes(response.data);
+        const response = await fetch("/api/routes");
+        if (!response.ok) {
+          throw new Error("Failed to fetch routes");
+        }
+        const data = await response.json();
+        setRoutes(data);
       } catch (error) {
         console.error('Error fetching routes:', error);
+        setError(error.message);
       }
     };
 
     fetchRoutes();
   }, []);
 
-  function removePlace(placeId) {
-    const filteredPlaces = places.filter((place) => place.id !== placeId);
-    setPlaces(filteredPlaces);
-  }
+  const removeRoute = (routeId) => {
+    const filteredRoutes = routes.filter((route) => route.id !== routeId);
+    setRoutes(filteredRoutes);
+  };
 
-  const placeCards = filteredPlaces.map((place) => (
-    <PlaceCard key={place.id} place={place} removePlace={removePlace} />
+  const filteredRoutes = routes.filter((route) => {
+    const lowercaseSearch = search ? search.toLowerCase() : '';
+    const lowercaseName = route.name ? route.name.toLowerCase() : '';
+    return lowercaseName.includes(lowercaseSearch);
+  });
+
+  const routeCards = filteredRoutes.map((route) => (
+    <RouteCard key={route.id} route={route} removeRoute={removeRoute} />
   ));
+
   return (
     <div className="route-list">
-      {/* <h2>Routes</h2>
-      <Link className='Routes'to="/routes/new">Add New Route</Link>
-      <ul> */}
-      {/* {routes.map(route => (
-        <li key={route.id}>
-        <Link className='Routes' to={`/routes/${route.id}`}>{route.name}</Link>
-      </li>
-    ))}
-  </ul> */}
-
-
-<h1>Routes</h1>
+      <h1>Routes</h1>
       <Link className='Routes' to="/routes/new">Add New Route</Link>
       {error && <p>Error: {error}</p>}
       {routeCards.length === 0 ? (
@@ -55,4 +56,7 @@ const RouteList = () => {
     </div>
   );
 };
+
 export default RouteList;
+
+

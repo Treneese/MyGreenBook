@@ -13,7 +13,7 @@ const CreateRoute = () => {
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const response = await api.get('http://localhost:5555/api/places');
+        const response = await api.get('/api/places');
         setPlaces(response.data);
       } catch (error) {
         console.error('Error fetching places:', error);

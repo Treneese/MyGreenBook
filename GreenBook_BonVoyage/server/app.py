@@ -54,7 +54,7 @@ api.add_resource(Logout, '/logout')
 
 class Login(Resource):
     def post(self):
-        import ipdb; ipdb.set_trace()
+       
         params = request.json
         user = User.query.filter_by(username=params.get('username')).first()
         if not user:
@@ -79,29 +79,29 @@ def log_request_info():
 # Profile Resource
 class Profile(Resource):
     def get(self): 
-
+        import ipdb; ipdb.set_trace()
         if 'user_id' not in session:
-            return jsonify({'error': 'Unauthorized access'}), 401
+            return make_response({'error': 'Unauthorized access'}, 401)
         
         user = User.query.get(session['user_id'])
         if not user:
-            return jsonify({'error': 'User not found'}), 404
+            return make_response({'error': 'User not found'}, 404)
         
-        return {
+        return make_response({
             'username': user.username,
             'email': user.email,
             'bio': user.bio,
             'image': user.image
-        }
+        })
 
     def put(self):
         
         if 'user_id' not in session:
-            return jsonify({'error': 'Unauthorized access'}), 401
+            return make_response(({'error': 'Unauthorized access'}), 401)
 
         user = User.query.get(session['user_id'])
         if not user:
-            return jsonify({'error': 'User not found'}), 404
+            return make_response(({'error': 'User not found'}), 404)
 
         data = request.get_json()
 
@@ -116,17 +116,17 @@ class Profile(Resource):
                 user.image = data['image']
 
             db.session.commit()
-            return jsonify({'message': 'Profile updated successfully'}), 200
+            return make_response(({'message': 'Profile updated successfully'}), 200)
 
         except KeyError as e:
-            return jsonify({'error': f'Missing key: {str(e)}'}), 400
+            return make_response(({'error': f'Missing key: {str(e)}'}), 400)
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+            return make_response(({'error': str(e)}), 500)
 
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
+            return make_response(({'error': str(e)}), 500)
 
 api.add_resource(Profile, '/api/profile')
 
@@ -161,11 +161,11 @@ api.add_resource(Places, '/api/places')
 class PlaceById(Resource):
     def get(self, place_id):
         place = Place.query.get_or_404(place_id)
-        return jsonify(place.to_dict())
+        return make_response((place.to_dict()))
     
   
     def delete(self, place_id):
-        place = Review.query.get_or_404(place_id)
+        place = Place.query.get_or_404(place_id)
         try:
             db.session.delete(place)
             db.session.commit()
@@ -201,25 +201,45 @@ class Routes(Resource):
         return make_response(routes_list, 200)
     
     def post(self):
-        data = request.get_json()
-        user_id = session.get('user_id')
-        if not user_id:
-            return make_response({'error': 'Unauthorized access'}, 401)
+        data = request.json
+        if 'name' not in data or 'place_ids' not in data:
+            return make_response({'error': 'Missing required fields: name and place_ids'}, 400)
         
-        new_route = Route(name=data['name'], user_id=user_id)
+        new_route = Route(name=data['name'])
+        db.session.add(new_route)
+        
         for place_id in data['place_ids']:
-            place = Place.query.get(place_id)
+            place = db.session.get(Place, place_id)  # Use session.get() instead of query.get()
             if place:
                 new_route.places.append(place)
+        
         try:
-            db.session.add(new_route)
             db.session.commit()
-            return make_response(new_route.to_dict(), 201)
+            return make_response(new_route.to_dict()), 201
         except SQLAlchemyError as e:
             db.session.rollback()
             return make_response({'error': str(e)}, 400)
 
+
 api.add_resource(Routes, '/api/routes')
+
+class RouteById(Resource):
+    def get(self, route_id):
+        route = Route.query.get_or_404(route_id)
+        return make_response((route.to_dict()))
+    
+  
+    def delete(self, route_id):
+        route = Route.query.get_or_404(route_id)
+        try:
+            db.session.delete(route)
+            db.session.commit()
+            return '', 204
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return make_response({'error': str(e)}, 400)
+
+api.add_resource(RouteById, '/api/routes/<int:route_id>')
 
 # SafetyMarks Resource
 class SafetyMarks(Resource):
@@ -281,6 +301,12 @@ api.add_resource(SafetyMarkById, '/api/safety_marks/<int:safety_mark_id>')
 
 # Reviews Resource
 class Reviews(Resource):
+
+    def get(self):
+        reviews = Review.query.all()
+        review_list = [review.to_dict() for review in reviews]
+        return make_response((review_list), 200)
+    
     def post(self):
         data = request.get_json()
         user_id = session.get('user_id')
