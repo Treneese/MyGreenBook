@@ -26,7 +26,7 @@ function Header({  logoutUser }) {
             <Link to="/places">Places</Link>
           </li>
           <li className="nav-item">
-            <Link to="/routes/new">Create Route</Link>
+            <Link to="/routes"> Route</Link>
           </li>
           <li className="nav-item">
             <Link to="/map">Map</Link>
@@ -45,6 +45,7 @@ function Header({  logoutUser }) {
           </li> */}
         </ul>
       </nav>
+      <button onClick={handleLogout}>Logout</button>
     </header>
   );
 };

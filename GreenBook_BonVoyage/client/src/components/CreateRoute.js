@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import PlaceList from './PlaceList';
 
 const CreateRoute = () => {
   const [name, setName] = useState('');

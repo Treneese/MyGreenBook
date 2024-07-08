@@ -20,7 +20,7 @@ const PlaceCard = ({ place }) => {
       <p>Address: {place.address}</p>
       <p>Safety Rating: {place.safety_rating}</p>
       <Link to={`/places/${place.id}`}>View Details</Link>
-      <SafetyMark placeId={place.id} />
+      {/* <SafetyMark placeId={place.id} /> */}
       <button className={`favorite-button ${isFavorite ? "favorite" : ""}`} onClick={toggleFavorite}>
           {isFavorite ? "Remove Favorite" : "Add to Favorites"}
         </button>

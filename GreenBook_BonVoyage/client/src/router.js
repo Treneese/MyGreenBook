@@ -10,6 +10,7 @@ import PlaceDetails from './components/PlaceDetails';
 import CreateRoute from './components/CreateRoute';
 import Chat from './components/Chat';
 import Profile from './components/Profile';
+import RouteList from "./components/RouteList";
 
 const routes = [
     {
@@ -23,6 +24,7 @@ const routes = [
         { path: '/places', element: <PlaceList /> },
         { path: '/places/new', element: <CreatePlace /> },
         { path: '/places/:placeId', element: <PlaceDetails /> },
+        { path: '/routes', element: <RouteList /> },
         { path: '/routes/new', element: <CreateRoute /> },
         { path: '/chat', element: <Chat /> },
         { path: '/profile', element: <Profile /> }

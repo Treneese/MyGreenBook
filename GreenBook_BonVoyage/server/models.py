@@ -122,6 +122,15 @@ class Review(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'rating': self.rating,
+            'place_id': self.place_id,
+            'user_id': self.user_id
+        }
+    
     @validates('content')
     def validate_content(self, key, content):
         if not content or len(content) < 10:
