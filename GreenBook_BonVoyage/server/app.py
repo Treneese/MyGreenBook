@@ -332,7 +332,7 @@ class Reviews(Resource):
             rating=data['rating'],
             place_id=data['place_id'],
             user_id=user_id,
-            user_name=user.username,
+            user_username=user.username,
             user_image=user.image
         )
         try:

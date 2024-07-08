@@ -58,8 +58,8 @@ const OurCommunity = () => {
       <h1>Our Community</h1>
       {reviews.map(review => (
         <div key={review.id} className="review-card">
-          <img src={review.user_image} alt="Profile" />
-          <h3>{review.user_name}</h3>
+          <img src={review.user_image} alt="Profile Picture" />
+          <h3>{review.user_username}</h3>
           <p>{review.content}</p>
           <p>Rating: {review.rating}</p>
           {/* Additional UI components for comments, likes, etc. */}

@@ -17,7 +17,7 @@ route_place_association = db.Table('route_place_association',
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ('-created_at', '-updated_at', '-_password_hash', '-safety_marks.user', '-routes.user', '-reviews.user')
+    serialize_rules = ('-created_at', '-updated_at', '-_password_hash', '-safety_marks.user', '-routes.user', '-reviews')
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -127,16 +127,16 @@ class Route(db.Model, SerializerMixin):
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
 
-    serialize_rules = ('-place.reviews')
+    serialize_rules = ('-place.reviews', '-user')
 # '-user.reviews'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Float, nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user_name = db.Column(db.String(80), db.ForeignKey('users.name'), nullable=False)
+    user_username = db.Column(db.String(80), db.ForeignKey('users.username'), nullable=False)
     user_image = db.Column(db.String(500), db.ForeignKey('users.image'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utc, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     def to_dict(self):
         return {
@@ -145,7 +145,7 @@ class Review(db.Model, SerializerMixin):
             'rating': self.rating,
             'place_id': self.place_id,
             'user_id': self.user_id,
-            'user_name': self.user_name,
+            'user_username': self.user_name,
             'user_image': self.user_image,
             'created_at': self.created_at
         }
