@@ -86,7 +86,7 @@ function Map() {
       }
 
       
-      addRoute(center, [-2.24, 53.48]); // Replace with desired coordinates
+      addRoute(center, [-2.24, 53.48]);
     }
   }, []);
 

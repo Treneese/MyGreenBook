@@ -323,11 +323,17 @@ class Reviews(Resource):
         if not user_id:
             return make_response({'error': 'Unauthorized access'}, 401)
 
+        user = User.query.get(user_id)
+        if not user:
+            return make_response({'error': 'User not found'}, 404)
+
         new_review = Review(
             content=data['content'],
             rating=data['rating'],
             place_id=data['place_id'],
-            user_id=user_id
+            user_id=user_id,
+            user_name=user.username,
+            user_image=user.image
         )
         try:
             db.session.add(new_review)

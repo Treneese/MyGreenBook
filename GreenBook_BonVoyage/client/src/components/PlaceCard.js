@@ -1,7 +1,7 @@
 // src/components/PlaceCard.js
 import {React, useState} from 'react';
 import { Link } from 'react-router-dom';
-import './PlaceCard.css'; // Assuming you will create this CSS file for styling
+import './PlaceCard.css'; 
 import SafetyMark from './SafetyMark';
 
 const PlaceCard = ({ place }) => {

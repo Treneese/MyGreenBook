@@ -10,7 +10,7 @@ function Header({  logoutUser }) {
           method: 'DELETE'
       }).then( resp => {
           if (resp.ok) {
-              // update the state of the user back to a falsey value
+             
               logoutUser()
           }
       })
@@ -32,7 +32,7 @@ function Header({  logoutUser }) {
             <Link to="/map">Map</Link>
           </li>
           <li className="nav-item">
-            <Link to="/chat">Chat</Link>
+            <Link to="/community">OurCommunity</Link>
           </li>
           <li className="nav-item">
             <Link to="/profile">Profile</Link>

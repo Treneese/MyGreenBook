@@ -39,7 +39,7 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  // Handler for input changes
+ 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({
@@ -48,7 +48,7 @@ const Profile = () => {
     }));
   };
 
-  // Handler for image changes
+ 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -63,7 +63,7 @@ const Profile = () => {
     }
   };
 
-  // Handler for form submission
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -76,12 +76,12 @@ const Profile = () => {
     }
   };
 
-  // Show loading message while data is being fetched
+ 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // Render the profile form
+
   return (
     <div>
       <h2>Profile</h2>

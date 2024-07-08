@@ -42,7 +42,7 @@ const Register = ({ setUser }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, email, password }),
-        credentials: 'include', // Include credentials for session-based auth
+        credentials: 'include', 
       });
 
         if (response.ok) {
