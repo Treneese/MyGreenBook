@@ -3,22 +3,31 @@ import axios from 'axios';
 
 const OurCommunity = () => {
   const [reviews, setReviews] = useState([]);
+  const [user, setUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [newReview, setNewReview] = useState('');
   const [newRating, setNewRating] = useState(0);
   const [newPlaceId, setNewPlaceId] = useState(null);
+  const [places, setPlaces] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchReviews();
     fetchCurrentUserProfile();
+    fetchPlaces();
   }, []);
 
   const fetchReviews = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get('/api/reviews');
       setReviews(response.data);
     } catch (error) {
       console.error('Error fetching reviews:', error);
+      setError('Failed to fetch reviews. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -28,6 +37,17 @@ const OurCommunity = () => {
       setCurrentUser(response.data);
     } catch (error) {
       console.error('Error fetching current user profile:', error);
+      setError('Failed to fetch current user profile. Please try again.');
+    }
+  };
+
+  const fetchPlaces = async () => {
+    try {
+      const response = await axios.get('/api/places');
+      setPlaces(response.data);
+    } catch (error) {
+      console.error('Error fetching places:', error);
+      setError('Failed to fetch places. Please try again.');
     }
   };
 
@@ -38,6 +58,7 @@ const OurCommunity = () => {
     }
 
     try {
+      setIsLoading(true);
       const response = await axios.post('/api/reviews', {
         content: newReview,
         rating: newRating,
@@ -50,18 +71,27 @@ const OurCommunity = () => {
       setNewPlaceId(null);
     } catch (error) {
       console.error('Error posting review:', error);
+      setError('Failed to post review. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="community-container">
       <h1>Our Community</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       {reviews.map(review => (
         <div key={review.id} className="review-card">
-          <img src={review.user_image} alt="Profile Picture" />
-          <h3>{review.user_username}</h3>
+          <img src={user.image} alt="Profile" />
+          <h3>{user.username}</h3>
           <p>{review.content}</p>
           <p>Rating: {review.rating}</p>
+          <p>Place: {place.name}</p>
           {/* Additional UI components for comments, likes, etc. */}
         </div>
       ))}
@@ -80,12 +110,17 @@ const OurCommunity = () => {
             onChange={(e) => setNewRating(Number(e.target.value))}
             placeholder="Rating (0-5)"
           />
-          <input
-            type="number"
+          <select
             value={newPlaceId}
             onChange={(e) => setNewPlaceId(Number(e.target.value))}
-            placeholder="Place ID"
-          />
+          >
+            <option value="" disabled>Select a place</option>
+            {places.map(place => (
+              <option key={place.id} value={place.id}>
+                {place.name}
+              </option>
+            ))}
+          </select>
           <button onClick={handlePostReview}>Post Review</button>
         </div>
       ) : (

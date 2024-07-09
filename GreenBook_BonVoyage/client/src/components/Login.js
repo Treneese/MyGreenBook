@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link  } from 'react-router-dom';
 import * as yup from 'yup';
 
 const Login = ({ setUser }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [login, setLogin] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const loginSchema = yup.object().shape({
@@ -44,16 +44,18 @@ const Login = ({ setUser }) => {
         setUser(user);
         navigate('/places');
       } else {
-        console.error('Login failed:', response.statusText);
+        const errorResponse = await response.json();
+        setError(errorResponse.message || 'Login failed. Please try again.');
       }
-    } catch (error) {
-      console.error('Validation failed:', error.errors);
+    } catch (validationError) {
+      setError(validationError.errors ? validationError.errors[0] : 'Validation failed. Please try again.');
     }
   };
 
   return (
     <div className="login">
       <h2>Login</h2>
+      {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"

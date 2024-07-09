@@ -5,9 +5,9 @@ from models import User, Place, Route, Review, SafetyMark
 
 def seed_users():
     try:
-        ayanna = User(username='ayanna', email='ayanna@example.com', password_hash=bcrypt.generate_password_hash('password123').decode('utf-8'))
-        zuri = User(username='zuri', email='zuri@example.com', password_hash=bcrypt.generate_password_hash('password123').decode('utf-8'))
-        ezra = User(username='ezra', email='ezra@example.com', password_hash=bcrypt.generate_password_hash('password123').decode('utf-8'))
+        ayanna = User(username='ayanna', email='ayanna@example.com', password_hash=bcrypt.generate_password_hash('password123').decode('utf-8'), profile_image='/Users/treneese/Development/code/phase-5/GreenBook_BonVoyage/client/public/person-icon.jpg')
+        zuri = User(username='zuri', email='zuri@example.com', password_hash=bcrypt.generate_password_hash('password123').decode('utf-8'),  profile_image='/Users/treneese/Development/code/phase-5/GreenBook_BonVoyage/client/public/person-icon.jpg')
+        ezra = User(username='ezra', email='ezra@example.com', password_hash=bcrypt.generate_password_hash('password123').decode('utf-8'),  profile_image='/Users/treneese/Development/code/phase-5/GreenBook_BonVoyage/client/public/person-icon.jpg')
 
         db.session.add(ayanna)
         db.session.add(zuri)

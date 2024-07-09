@@ -14,7 +14,7 @@ const PlaceDetails = () => {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const response = await api.get(`http://localhost:5555/api/places/${placeId}`);
+        const response = await api.get(`/api/places/${placeId}`);
         setPlace(response.data);
       } catch (error) {
         console.error('Error fetching place details:', error);

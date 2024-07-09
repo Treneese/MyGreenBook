@@ -173,23 +173,7 @@ class PlaceById(Resource):
         except SQLAlchemyError as e:
             db.session.rollback()
             return make_response({'error': str(e)}, 400)
-    # def delete(self, place_id):
-    #     if 'user_id' not in session:
-    #         return jsonify({'error': 'Unauthorized access'}), 401
-        
-    #     place = Place.query.get(place_id)
-    #     if not place:
-    #         return jsonify({'error': 'Place not found'}), 404
-        
-    #     try:
-    #         db.session.delete(place)
-    #         db.session.commit()
-    #         return make_response({'message': 'Place deleted successfully'}, 200)
-    #     except SQLAlchemyError as e:
-    #         db.session.rollback()
-    #         return make_response({'error': str(e)}, 500)
-    #     except Exception as e:
-    #         return make_response({'error': str(e)}, 500)
+   
 
 api.add_resource(PlaceById, '/api/places/<int:place_id>')
 
@@ -313,34 +297,62 @@ api.add_resource(SafetyMarkById, '/api/safety_marks/<int:safety_mark_id>')
 class Reviews(Resource):
 
     def get(self):
+        # reviews = Review.query.all()
+        # review_list = [review.to_dict() for review in reviews]
+        # return make_response((review_list), 200)
+    
         reviews = Review.query.all()
-        review_list = [review.to_dict() for review in reviews]
-        return make_response((review_list), 200)
+        reviews_list = []
+        for review in reviews:
+            review_data = {
+                'id': review.id,
+                'content': review.content,
+                'rating': review.rating,
+                'place': {
+                    'id': review.place.id,
+                    'name': review.place.name
+                },
+                'user': {
+                    'id': review.user.id,
+                    'username': review.user.username,
+                    'profile_image': review.user.profile_image
+                }
+            }
+            reviews_list.append(review_data)
+        return make_response((reviews_list), 200)
     
     def post(self):
         data = request.get_json()
         user_id = session.get('user_id')
+
         if not user_id:
             return make_response({'error': 'Unauthorized access'}, 401)
 
-        user = User.query.get(user_id)
-        if not user:
-            return make_response({'error': 'User not found'}, 404)
-
-        new_review = Review(
-            content=data['content'],
-            rating=data['rating'],
-            place_id=data['place_id'],
-            user_id=['user_id'],
-           \
-        )
         try:
+            new_review = Review(
+                content=data.get('content'),
+                rating=data.get('rating'),
+                place_id=data.get('place_id'),
+                user_id=user_id
+            )
+
             db.session.add(new_review)
             db.session.commit()
-            return jsonify(new_review.to_dict()), 201
+
+            return make_response(jsonify(new_review.to_dict()), 201)
+
+        except KeyError as e:
+            return make_response({'error': f'Missing key: {str(e)}'}, 400)
+
+        except ValueError as e:
+            return make_response({'error': str(e)}, 400)
+
         except SQLAlchemyError as e:
             db.session.rollback()
-            return make_response({'error': str(e)}, 400)
+            return make_response({'error': str(e)}, 500)
+
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
 
 api.add_resource(Reviews, '/api/reviews')
 

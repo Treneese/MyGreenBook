@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useJwt } from 'react-jwt';
 
 const Profile = () => {
-  // State for holding the profile data
   const [profile, setProfile] = useState({
     username: '',
     email: '',
     bio: '',
     image: ''
   });
-  // State for editing mode
-  const [isEditing, setIsEditing] = useState(false);
-  // State for loading status
-  const [loading, setLoading] = useState(true);
-  // State for error messages
-  const [error, setError] = useState('');
-  // Hook for navigation
-  const navigate = useNavigate();
-  // Decoding the JWT token
-;
 
-  // Effect for fetching profile data when component mounts
+  const [initialProfile, setInitialProfile] = useState({
+    username: '',
+    email: '',
+    bio: '',
+    image: ''
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/api/profile', );
+        const response = await axios.get('/api/profile');
         setProfile(response.data);
+        setInitialProfile(response.data); // Store initial profile for comparison
       } catch (error) {
         console.error('Error fetching profile:', error);
         setError('Failed to fetch profile data. Please try again.');
@@ -39,7 +40,6 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
- 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({
@@ -48,7 +48,6 @@ const Profile = () => {
     }));
   };
 
- 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -63,11 +62,10 @@ const Profile = () => {
     }
   };
 
- 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put('/api/profile', profile,)
+      await axios.put('/api/profile', profile);
       setIsEditing(false);
       alert('Profile updated successfully');
     } catch (error) {
@@ -76,11 +74,15 @@ const Profile = () => {
     }
   };
 
- 
+  const handleCancel = () => {
+    // Reset profile to initial state and exit edit mode
+    setProfile(initialProfile);
+    setIsEditing(false);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
-
 
   return (
     <div>
@@ -123,7 +125,10 @@ const Profile = () => {
         </div>
         <div>
           {isEditing ? (
-            <button type="submit">Save</button>
+            <>
+              <button type="button" onClick={handleCancel}>Cancel</button>
+              <button type="submit">Save</button>
+            </>
           ) : (
             <button type="button" onClick={() => setIsEditing(true)}>
               Edit
@@ -136,4 +141,6 @@ const Profile = () => {
 };
 
 export default Profile;
+
+
 

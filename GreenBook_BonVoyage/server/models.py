@@ -79,7 +79,10 @@ class Place(db.Model, SerializerMixin):
     def to_dict(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            'city': self.city,
+            'address': self.address,
+            'safety_rating': self.safety_rating
         }
     
     @validates('name', 'city', 'address')
@@ -128,7 +131,7 @@ class Route(db.Model, SerializerMixin):
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
 
-    serialize_rules = ('-place', '-user')
+    serialize_rules = ('-place.reviews', '-user.reviews')
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
