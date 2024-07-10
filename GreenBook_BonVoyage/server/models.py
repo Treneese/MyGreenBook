@@ -74,7 +74,7 @@ class Place(db.Model, SerializerMixin):
     safety_rating = db.Column(db.Float, nullable=False)
 
     reviews = db.relationship('Review', backref='place', lazy=True)
-    safety_marks = db.relationship('SafetyMark', backref='place', lazy=True)
+    safety_marks = db.relationship('SafetyMark', backref='place', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self):
         return {

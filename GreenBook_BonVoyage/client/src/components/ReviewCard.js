@@ -9,17 +9,17 @@ const ReviewCard = ({ review, onLike, onAddComment }) => {
     return null;
   }
 
-//   const handleAddComment = () => {
-//     if (newComment.trim()) {
-//       onAddComment(newComment);
-//       setNewComment('');
-//     }
-//   };
-
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      onAddComment(newComment);
+      setNewComment('');
+    }
+  };
+  console.log(user)
   return (
     <div className="review-card">
       <div className="user-info">
-        <img src={user.image} alt={`${user.username}'s Profile`} />
+        <img src={user.profile_image} alt={`${user.username}'s Profile`} />
         <p>{user.username}</p>
       </div>
       <div className="review-content">
@@ -40,8 +40,8 @@ const ReviewCard = ({ review, onLike, onAddComment }) => {
             placeholder="Add a comment..."
           />
           <button onClick={handleAddComment}>Post Comment</button>
-        </div>
-      </div> */}
+        </div> */}
+      {/* </div> */}
     </div>
   );
 };

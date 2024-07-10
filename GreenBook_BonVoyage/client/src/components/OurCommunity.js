@@ -91,11 +91,19 @@ const OurCommunity = () => {
     }
   };
 
-  const handleAddComment = async (reviewId, comment) => {
+  const handleAddComment = async (reviewId, commentContent, userId) => {
     try {
-      const response = await axios.post(`/api/reviews/${reviewId}/comments`, { comment }, { withCredentials: true });
-      setReviews(reviews.map(review => 
-        review.id === reviewId ? { ...review, comments: [...review.comments, response.data] } : review
+      const response = await axios.post(
+        `/api/reviews/${reviewId}/comments`,
+        { content: commentContent, user_id: userId },
+        { withCredentials: true }
+      );
+      // Assuming response.data contains the new comment object or its ID
+      const newComment = response.data;
+  
+      // Update reviews state to reflect the new comment
+      setReviews(reviews.map(review =>
+        review.id === reviewId ? { ...review, comments: [...review.comments, newComment] } : review
       ));
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -112,7 +120,7 @@ const OurCommunity = () => {
       <h1>Our Community</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {reviews.map(review => (
-        <ReviewCard key={review.id} review={review} />
+        <ReviewCard key={review.id} review={review} onAddComment={handleAddComment}/>
       ))}
 
       {currentUser ? (

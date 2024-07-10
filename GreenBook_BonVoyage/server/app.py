@@ -79,7 +79,7 @@ def log_request_info():
 # Profile Resource
 class Profile(Resource):
     def get(self): 
-        import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         if 'user_id' not in session:
             return make_response({'error': 'Unauthorized access'}, 401)
         
@@ -166,6 +166,7 @@ class PlaceById(Resource):
   
     def delete(self, place_id):
         place = Place.query.get_or_404(place_id)
+        # import ipdb; ipdb.set_trace()
         try:
             db.session.delete(place)
             db.session.commit()
@@ -383,18 +384,26 @@ api.add_resource(LikeReviewById, '/api/reviews/<int:review_id>/like')
 
 class AddCommentById(Resource):
     def post(self, review_id):
-        data = request.get_json()
-        content = data.get('content')
-        user_id = data.get('user_id')
+        try:
+            data = request.get_json()
+            content = data.get('content')
+            user_id = data.get('user_id')
 
-        if not content or not user_id:
-            return make_response({'error': 'Content and user_id are required'}, 400)
+            if not content or not user_id:
+                return make_response({'error': 'Content and user_id are required'}, 400)
 
-        comment = Comment(content=content, user_id=user_id, review_id=review_id)
-        db.session.add(comment)
-        db.session.commit()
-        return make_response(comment.to_dict(), 201)
+            # Create a new Comment object and add it to the database
+            comment = Comment(content=content, user_id=user_id, review_id=review_id)
+            db.session.add(comment)
+            db.session.commit()
 
+            # Return the new comment data in JSON format
+            return make_response(comment.to_dict(), 201)
+
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+
+# Register the resource with the Flask API
 api.add_resource(AddCommentById, '/api/reviews/<int:review_id>/comments')
 
 
