@@ -131,7 +131,7 @@ class Route(db.Model, SerializerMixin):
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
 
-    serialize_rules = ('-place.reviews', '-user.reviews')
+    serialize_rules = ('-place.reviews', '-user.reviews', '-comments.review')
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -139,6 +139,8 @@ class Review(db.Model, SerializerMixin):
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    likes = db.Column(db.Integer, nullable=True) 
+    comments = db.relationship('Comment', backref='review', lazy=True)
 
     def to_dict(self):
         return {
@@ -147,7 +149,10 @@ class Review(db.Model, SerializerMixin):
             'rating': self.rating,
             'place_id': self.place_id,
             'user_id': self.user_id,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'likes': self.likes,
+            'comments': [comment.to_dict() for comment in self.comments]
+
         }
     
     @validates('content')
@@ -184,3 +189,27 @@ class SafetyMark(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<SafetyMark id={self.id} is_safe={self.is_safe} place_id={self.place_id} user_id={self.user_id}>'
+
+
+class Comment(db.Model, SerializerMixin):
+    __tablename__ = 'comments'
+
+    serialize_rules = ('-review.comments', '-user.reviews')
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'user_id': self.user_id,
+            'review_id': self.review_id,
+            'timestamp': self.timestamp
+        }
+
+def __repr__(self):
+        return f'<Comment id={self.id} user_id={self.user_id} review_id={self.review_id}>'

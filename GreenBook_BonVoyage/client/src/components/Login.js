@@ -47,11 +47,11 @@ const Login = ({ setUser }) => {
         const errorResponse = await response.json();
         setError(errorResponse.message || 'Login failed. Please try again.');
       }
-    } catch (validationError) {
-      setError(validationError.errors ? validationError.errors[0] : 'Validation failed. Please try again.');
+    }  catch (validationError) {
+      setError(validationError.errors ? validationError.errors[0] : '');
     }
   };
-
+  //Validation failed. Please try again.
   return (
     <div className="login">
       <h2>Login</h2>

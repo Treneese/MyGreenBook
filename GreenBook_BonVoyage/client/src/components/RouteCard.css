@@ -6,7 +6,7 @@
     margin: 8px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: #9a9999;
   }
   
   .route-card h3 {
@@ -27,7 +27,7 @@
   .route-card a {
     display: inline-block;
     margin-top: 8px;
-    color: #007bff;
+    color: #078101;
     text-decoration: none;
   }
   
@@ -41,13 +41,13 @@
     padding: 8px 16px;
     font-size: 1em;
     color: #fff;
-    background-color: #007bff;
+    background-color: #0aa326;
     border: none;
     border-radius: 4px;
     cursor: pointer;
   }
   
   .route-card button:hover {
-    background-color: #0056b3;
+    background-color: #59ed09;
   }
   

@@ -79,6 +79,30 @@ const OurCommunity = () => {
     }
   };
 
+  const handleLikeReview = async (reviewId) => {
+    try {
+      await axios.post(`/api/reviews/${reviewId}/like`, {}, { withCredentials: true });
+      setReviews(reviews.map(review => 
+        review.id === reviewId ? { ...review, likes: review.likes + 1 } : review
+      ));
+    } catch (error) {
+      console.error('Error liking review:', error);
+      setError('Failed to like review. Please try again.');
+    }
+  };
+
+  const handleAddComment = async (reviewId, comment) => {
+    try {
+      const response = await axios.post(`/api/reviews/${reviewId}/comments`, { comment }, { withCredentials: true });
+      setReviews(reviews.map(review => 
+        review.id === reviewId ? { ...review, comments: [...review.comments, response.data] } : review
+      ));
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      setError('Failed to add comment. Please try again.');
+    }
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }

@@ -8,7 +8,7 @@ from flask_restful import Resource
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import emit
 from config import db, bcrypt, socketio, api, app
-from models import User, Place, Route, Review, SafetyMark
+from models import User, Place, Route, Review, SafetyMark, Comment
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -369,6 +369,34 @@ class ReviewById(Resource):
             return make_response({'error': str(e)}, 400)
 
 api.add_resource(ReviewById, '/api/reviews/<int:review_id>')
+
+
+class LikeReviewById(Resource):
+    def post(self, review_id):
+        review = Review.query.get_or_404(review_id)
+        review.likes += 1
+        db.session.commit()
+        return make_response({'likes': review.likes}, 200)
+
+api.add_resource(LikeReviewById, '/api/reviews/<int:review_id>/like')
+
+
+class AddCommentById(Resource):
+    def post(self, review_id):
+        data = request.get_json()
+        content = data.get('content')
+        user_id = data.get('user_id')
+
+        if not content or not user_id:
+            return make_response({'error': 'Content and user_id are required'}, 400)
+
+        comment = Comment(content=content, user_id=user_id, review_id=review_id)
+        db.session.add(comment)
+        db.session.commit()
+        return make_response(comment.to_dict(), 201)
+
+api.add_resource(AddCommentById, '/api/reviews/<int:review_id>/comments')
+
 
 # Index route
 @app.route('/')

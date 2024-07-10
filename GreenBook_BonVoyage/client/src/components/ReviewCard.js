@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './ReviewCard.css';
 
-const ReviewCard = ({ review }) => {
-  const { content, rating, user, place } = review;
+const ReviewCard = ({ review, onLike, onAddComment }) => {
+  const { content, rating, user, place, likes, comments = [] } = review; // Default comments to an empty array
+  const [newComment, setNewComment] = useState('');
 
-  // Check if user exists before accessing properties
   if (!user) {
-    return null; // or handle the case where user is undefined/null
+    return null;
   }
+
+//   const handleAddComment = () => {
+//     if (newComment.trim()) {
+//       onAddComment(newComment);
+//       setNewComment('');
+//     }
+//   };
 
   return (
     <div className="review-card">
       <div className="user-info">
-        {/* Optional chaining to safely access user.image */}
-        {<img src={user.image} alt={`${user.username}'s Profile`} /> }
-        {/* {profile.image && <img src={profile.image} alt="Profile" style={{ width: '100px', height: '100px' }} />} */}
+        <img src={user.image} alt={`${user.username}'s Profile`} />
         <p>{user.username}</p>
       </div>
       <div className="review-content">
@@ -22,9 +27,25 @@ const ReviewCard = ({ review }) => {
         <p>Rating: {rating}</p>
         <p>Place: {place.name} ({place.city})</p>
       </div>
-      {/* Additional UI components for comments, likes, etc. */}
+      {/* <div className="review-actions">
+        <button onClick={onLike}>Like ({likes})</button>
+        <div className="comments-section">
+          <h4>Comments:</h4>
+          {comments.map((comment, index) => (
+            <p key={index}>{comment}</p>
+          ))}
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add a comment..."
+          />
+          <button onClick={handleAddComment}>Post Comment</button>
+        </div>
+      </div> */}
     </div>
   );
 };
 
 export default ReviewCard;
+
+
