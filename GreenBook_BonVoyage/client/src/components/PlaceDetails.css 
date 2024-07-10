@@ -1,0 +1,63 @@
+/* src/components/PlaceDetails.css */
+
+.place-details {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.place-details h1 {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.place-details p {
+  font-size: 1em;
+  color: #555;
+  margin: 4px 0;
+  text-align: center;
+}
+
+.place-details button {
+  padding: 10px 20px;
+  margin-top: 10px;
+  margin-right: 10px;
+  background-color: #28a745;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.place-details button:hover {
+  background-color: #0eef3f;
+}
+
+.place-details button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.show-reviews-button {
+  background-color: #007BFF;
+}
+
+.show-reviews-button:hover {
+  background-color: #0056b3;
+}
+
+.hide-reviews-button {
+  background-color: #dc3545;
+}
+
+.hide-reviews-button:hover {
+  background-color: #c82333;
+}

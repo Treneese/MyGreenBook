@@ -315,7 +315,7 @@ class Reviews(Resource):
                 'user': {
                     'id': review.user.id,
                     'username': review.user.username,
-                    'profile_image': review.user.profile_image
+                    'profile_image': review.user.image
                 }
             }
             reviews_list.append(review_data)

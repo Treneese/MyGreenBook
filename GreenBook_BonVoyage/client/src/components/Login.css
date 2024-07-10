@@ -1,18 +1,70 @@
-.Register {
-    text-align: center; 
-    line-height: 2; 
-    background-color: rgb(16, 122, 16);
-    color: rgb(248, 246, 239);
-    text-decoration: none;
-    font-weight: 400;
-    border-radius: 10px;
-    border: 1px solid rgb(247, 246, 237);
-    transition: .3s;
-    padding: 6px 8px;
-  }
+/* Login.css */
 
-  .Register:hover {
-    color: rgb(250, 252, 249);
-    box-shadow: 0 0 20px rgb(40, 42, 38);
-    background-color: rgb(81, 255, 0);
-  }
+.login {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #626060;
+}
+
+.login h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login form {
+  display: flex;
+  flex-direction: column;
+  background-color: #626060;
+}
+
+.login input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.login button:hover {
+  background-color: #0eef3f;
+}
+
+.login .error {
+  color: #ff0000;
+  margin-bottom: 10px;
+}
+
+.login p {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.login .register-link {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.login .register-link a {
+  color: #28a745;
+  text-decoration: none;
+}
+
+.login .register-link a:hover {
+  text-decoration: underline;
+}
+.login .h2{
+  color:#626060;
+}

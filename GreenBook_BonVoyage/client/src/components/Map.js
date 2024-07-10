@@ -29,7 +29,7 @@ function Map() {
       });
 
       const nav = new mapboxgl.NavigationControl();
-      map.addControl(nav);
+      map.addControl(nav, 'top-right');
 
      
       new mapboxgl.Marker()

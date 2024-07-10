@@ -1,18 +1,66 @@
 /* src/components/PlaceCard.css */
+
+
 .place-card {
-    border: 1px solid #ccc;
-    padding: 16px;
-    margin: 8px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .place-link {
-    text-decoration: none;
-    color: #007BFF;
-  }
-  
-  .place-link:hover {
-    text-decoration: underline;
-  }
-  
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #9b9999;
+  transition: box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.place-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.place-card h3 {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.place-card p {
+  font-size: 1em;
+  color: #555;
+  margin: 4px 0;
+}
+
+.place-link {
+  display: inline-block;
+  text-decoration: none;
+  color: #11c71d;
+  margin-top: 10px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.place-link:hover {
+  text-decoration: underline;
+  color: #52fe03;
+}
+
+.favorite-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.favorite-button.favorite {
+  background-color: #dc3545;
+}
+
+.favorite-button:hover {
+  background-color: #0eef3f;
+}
+
+.favorite-button.favorite:hover {
+  background-color: #c82333;
+}

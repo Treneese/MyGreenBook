@@ -1,0 +1,56 @@
+/* CreateRoute.css */
+
+.create-route {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    background-color: #6a6969;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .create-route h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333333;
+  }
+  
+  .create-route input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .create-route h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333333;
+  }
+  
+  .create-route label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .create-route input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .create-route button {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .create-route button:hover {
+    background-color: #0eef3f;
+  }
+  
+  

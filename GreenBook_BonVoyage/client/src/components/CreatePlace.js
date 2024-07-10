@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';  
+import'./CreatePlace.css';
 
 const CreatePlace = () => {
   const [name, setName] = useState('');

@@ -3,6 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import Header from './Header';
+import './App.css';
 
 const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);

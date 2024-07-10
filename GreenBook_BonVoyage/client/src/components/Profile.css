@@ -1,0 +1,87 @@
+/* src/components/Profile.css */
+
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .profile-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-container form div {
+    margin-bottom: 10px;
+  }
+  
+  .profile-container label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .profile-container input[type="text"],
+  .profile-container input[type="email"],
+  .profile-container textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    
+  }
+  
+  .profile-container input[type="file"] {
+    margin-top: 5px;
+  }
+  
+  .profile-container img {
+    display: block;
+    margin-top: 10px;
+    border-radius: 50%;
+  }
+  
+  .profile-container button {
+    padding: 10px 15px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .profile-container button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .profile-container button[type="submit"]:hover {
+    background-color: #218838;
+  }
+  
+  .profile-container button[type="button"] {
+    background-color: #0eb802;
+    color: white;
+  }
+  
+  .profile-container button[type="button"]:hover {
+    background-color: #1bc304;
+  }
+  
+  .profile-container button[type="button"]:first-child {
+    background-color: #dc3545;
+    margin-right: 10px;
+  }
+  
+  .profile-container button[type="button"]:first-child:hover {
+    background-color: #c82333;
+  }
+  

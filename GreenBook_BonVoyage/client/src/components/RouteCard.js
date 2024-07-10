@@ -1,7 +1,7 @@
 // src/components/RouteCard.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import './RouteCard.css';
 const RouteCard = ({ route }) => {
   const { id, name, places } = route;
   const [isFavorite, setIsFavorite] = useState(false);

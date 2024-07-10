@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import SafetyMark from './SafetyMark';
 import ReviewList from "./ReviewList";
+// import './PlaceDetails.css';
 //add /api/reviews/<int:review_id> and routes safetymark add deleteboton that connects to back end
 const PlaceDetails = () => {
   const { placeId } = useParams();

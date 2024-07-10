@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ReviewCard from './ReviewCard';
+import './OurCommunity.css';
+
 
 const OurCommunity = () => {
   const [reviews, setReviews] = useState([]);
-  const [user, setUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [newReview, setNewReview] = useState('');
   const [newRating, setNewRating] = useState(0);
@@ -86,14 +88,7 @@ const OurCommunity = () => {
       <h1>Our Community</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {reviews.map(review => (
-        <div key={review.id} className="review-card">
-          <img src={user.image} alt="Profile" />
-          <h3>{user.username}</h3>
-          <p>{review.content}</p>
-          <p>Rating: {review.rating}</p>
-          <p>Place: {place.name}</p>
-          {/* Additional UI components for comments, likes, etc. */}
-        </div>
+        <ReviewCard key={review.id} review={review} />
       ))}
 
       {currentUser ? (
@@ -131,6 +126,9 @@ const OurCommunity = () => {
 };
 
 export default OurCommunity;
+
+
+
 
 
 

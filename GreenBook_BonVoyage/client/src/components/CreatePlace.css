@@ -1,0 +1,41 @@
+/* CreatePlace.css */
+
+.create-place {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #f5f5f5;
+  }
+  
+  .create-place h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333333;
+  }
+  
+  .create-place input[type="text"],
+  .create-place input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .create-place button {
+    width: 100%;
+    padding: 10px 20px;
+    background-color:  #28a745;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .create-place button:hover {
+    background-color: #0eef3f;
+  }
+  

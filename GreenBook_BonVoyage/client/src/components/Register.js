@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
+import './Register.css';
 
 const Register = ({ setUser }) => {
   const [username, setUsername] = useState('');
