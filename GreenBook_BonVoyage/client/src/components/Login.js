@@ -54,6 +54,9 @@ const Login = ({ setUser }) => {
   //Validation failed. Please try again.
   return (
     <div className="login">
+       <h1>Welcome to the Green Book</h1>
+      <h2>Bon Voyage</h2>
+      <p>Your go-to app for safe route navigation and place finding.</p>
       <h2>Login</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>

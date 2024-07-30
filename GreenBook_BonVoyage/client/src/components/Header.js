@@ -6,7 +6,7 @@ import './Header.css';
 function Header({  logoutUser }) {
  
   function handleLogout() {
-      fetch('/logout', {
+      fetch('/logout', '/login' , {
           method: 'DELETE'
       }).then( resp => {
           if (resp.ok) {
@@ -17,6 +17,7 @@ function Header({  logoutUser }) {
   }
   return (
     <header className="header">
+       <img src='/BonVoyageLogo.png'  alt='Logo' className="Bon-Voyage-Logo" />
       <nav className="nav">
         <ul className="nav-list">
           {/* <li className="nav-item">

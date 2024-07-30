@@ -16,6 +16,20 @@ function ReviewList({ placeId }) {
       .catch((error) => setError(error.message));
   }, [placeId]);
 
+  // function removePlace(placeId) {
+  //   const filteredPlaces = places.filter((place) => place.id !== placeId);
+  //   setPlaces(filteredPlaces);
+  // }
+  // const filteredPlaces = places.filter((place) => {
+  //   const lowercaseSearch = search ? search.toLowerCase() : '';
+  //   const lowercaseName = place.name ? place.name.toLowerCase() : '';
+  //   return lowercaseName.includes(lowercaseSearch);
+  // });
+
+  // const placeCards = filteredPlaces.map((place) => (
+  //   <PlaceCard key={place.id} place={place} removePlace={removePlace} />
+  // ));
+
   return (
     <div>
       <h3>Reviews</h3>

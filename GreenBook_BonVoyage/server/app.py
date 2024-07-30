@@ -371,6 +371,11 @@ class ReviewById(Resource):
 
 api.add_resource(ReviewById, '/api/reviews/<int:review_id>')
 
+# class PlaceByIdReview(Resource):
+#     def get(self,review_id):
+
+# api.add_resource(ReviewById, '/api/places/<int:place_id>/reviews')
+
 
 class LikeReviewById(Resource):
     def post(self, review_id):

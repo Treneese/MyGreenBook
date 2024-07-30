@@ -52,6 +52,7 @@ const OurCommunity = () => {
       setError('Failed to fetch places. Please try again.');
     }
   };
+  // fetch stories, sidebar, edit the review closer to their create post and at the top
 
   const handlePostReview = async () => {
     if (!currentUser) {
@@ -135,7 +136,7 @@ const OurCommunity = () => {
             type="number"
             value={newRating}
             onChange={(e) => setNewRating(Number(e.target.value))}
-            placeholder="Rating (0-5)"
+            placeholder="Rating (0.0-5.0)"
           />
           <select
             value={newPlaceId}

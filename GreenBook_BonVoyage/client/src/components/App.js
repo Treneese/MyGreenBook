@@ -30,9 +30,7 @@ const App = () => {
   return (
     <div className="home">
       <Header logoutUser={logoutUser} />
-      <h1>Welcome to the Green Book</h1>
-      <h2>Bon Voyage</h2>
-      <p>Your go-to app for safe route navigation and place finding.</p>
+     
       {loggedInUser ? (
         <Outlet />
       ) : (
