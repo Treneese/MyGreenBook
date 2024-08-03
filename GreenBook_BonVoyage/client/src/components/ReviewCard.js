@@ -27,7 +27,7 @@ const ReviewCard = ({ review, onLike, onAddComment }) => {
         <p>Rating: {rating}</p>
         <p>Place: {place.name} ({place.city})</p>
       </div>
-      {/* <div className="review-actions">
+      <div className="review-actions">
         <button onClick={onLike}>Like ({likes})</button>
         <div className="comments-section">
           <h4>Comments:</h4>
@@ -40,12 +40,10 @@ const ReviewCard = ({ review, onLike, onAddComment }) => {
             placeholder="Add a comment..."
           />
           <button onClick={handleAddComment}>Post Comment</button>
-        </div> */}
-      {/* </div> */}
+        </div> 
+     </div>
     </div>
   );
 };
 
 export default ReviewCard;
-
-

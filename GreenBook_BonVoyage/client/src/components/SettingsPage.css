@@ -1,0 +1,29 @@
+/* SettingsPage.css */
+.settings-page {
+    padding: 20px;
+  }
+  
+  .settings-page h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .settings-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .settings-form button {
+    align-self: flex-start;
+    padding: 10px 20px;
+  }
+  

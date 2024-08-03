@@ -1,4 +1,4 @@
-/* src/components/Profile.css */
+/* src/components/Profile.css
 
 .profile-container {
     max-width: 600px;
@@ -84,4 +84,98 @@
   .profile-container button[type="button"]:first-child:hover {
     background-color: #c82333;
   }
-  
+   */
+
+   /* Profile.css */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white;
+  border-radius: 10px 10px 0 0;
+  width: 100%;
+}
+
+.profile-header img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 5px solid white;
+}
+
+.profile-header h2 {
+  margin: 10px 0 5px;
+  font-size: 2em;
+}
+
+.profile-header p {
+  margin: 0;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+.profile-form {
+  width: 100%;
+  padding: 20px;
+}
+
+.profile-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.profile-form input,
+.profile-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.profile-form input[type="file"] {
+  padding: 3px;
+}
+
+.profile-form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.profile-form button[type="button"] {
+  background-color: #6c757d;
+  margin-right: 10px;
+}
+
+.profile-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

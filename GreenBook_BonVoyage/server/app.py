@@ -412,6 +412,55 @@ class AddCommentById(Resource):
 api.add_resource(AddCommentById, '/api/reviews/<int:review_id>/comments')
 
 
+@app.route('/follow/<int:user_id>', methods=['POST'])
+def follow(user_id):
+    follow_user = User.query.get(user_id)
+    if follow_user:
+        current_user = User.query.get(current_user_id)
+        if follow_user not in current_user.following:
+            current_user.following.append(follow_user)
+            db.session.commit()
+            return user_schema.jsonify(current_user)
+    return jsonify({'message': 'User not found'}), 404
+
+@app.route('/unfollow/<int:user_id>', methods=['POST'])
+def unfollow(user_id):
+    unfollow_user = User.query.get(user_id)
+    if unfollow_user:
+        current_user = User.query.get(current_user_id)
+        if unfollow_user in current_user.following:
+            current_user.following.remove(unfollow_user)
+            db.session.commit()
+            return user_schema.jsonify(current_user)
+    return jsonify({'message': 'User not found'}), 404
+
+@app.route('/create_post', methods=['POST'])
+def create_post():
+    data = request.get_json()
+    new_post = Post(content=data['content'], user_id=current_user_id)
+    db.session.add(new_post)
+    db.session.commit()
+    return post_schema.jsonify(new_post)
+
+@app.route('/messages', methods=['POST'])
+def send_message():
+    data = request.get_json()
+    new_message = Message(content=data['content'], sender_id=current_user_id, receiver_id=data['receiver_id'])
+    db.session.add(new_message)
+    db.session.commit()
+    return message_schema.jsonify(new_message)
+
+@app.route('/history', methods=['GET'])
+
+def get_history():
+    history = History.query.filter_by(user_id=current_user_id).all()
+    return jsonify(history_schema.dump(history, many=True))
+
+@app.route('/notifications', methods=['GET'])
+def get_notifications():
+    notifications = Notification.query.filter_by(user_id=current_user_id).all()
+    return jsonify(notification_schema.dump(notifications, many=True))
+
 # Index route
 @app.route('/')
 def index():

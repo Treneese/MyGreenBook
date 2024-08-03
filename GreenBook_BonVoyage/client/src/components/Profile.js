@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
+import Sidebar from './Sidebar';
+
 const Profile = () => {
   const [profile, setProfile] = useState({
     username: '',
@@ -86,6 +88,7 @@ const Profile = () => {
 
   return (
     <div>
+       <Sidebar />
       <h2>Profile</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>

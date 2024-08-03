@@ -1,0 +1,19 @@
+/* NotificationsPage.css */
+.notifications-page {
+    padding: 20px;
+  }
+  
+  .notifications-page h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .notification-item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+  }
+  
+  .notification-item p {
+    margin: 5px 0;
+  }
+  

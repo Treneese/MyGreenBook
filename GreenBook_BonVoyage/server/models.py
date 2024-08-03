@@ -32,7 +32,10 @@ class User(db.Model, SerializerMixin):
     safety_marks = db.relationship('SafetyMark', backref='user', lazy=True)
     routes = db.relationship('Route', backref='user', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
-
+    followers = db.relationship('User', secondary='follower', 
+                                primaryjoin=(id==Follower.following_id), 
+                                secondaryjoin=(id==Follower.follower_id),
+                                backref='following')
     @validates('username')
     def validate_username(self, key, username):
         if not username or len(username) < 3:
@@ -213,3 +216,54 @@ class Comment(db.Model, SerializerMixin):
 
 def __repr__(self):
         return f'<Comment id={self.id} user_id={self.user_id} review_id={self.review_id}>'
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    action = db.Column(db.String(150), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    class Follower(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    following_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+# Schemas
+    class UserSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = User
+
+    class PostSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = Post
+
+    class MessageSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = Message
+
+    class NotificationSchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = Notification
+
+    class HistorySchema(ma.SQLAlchemyAutoSchema):
+        class Meta:
+            model = History
+
+    user_schema = UserSchema()
+    post_schema = PostSchema()
+    message_schema = MessageSchema()
+    notification_schema = NotificationSchema()
+    history_schema = HistorySchema()

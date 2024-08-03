@@ -12,6 +12,13 @@ import OurCommunity from './components/OurCommunity';
 import Profile from './components/Profile';
 import RouteList from "./components/RouteList";
 import RouteDetails from "./components/RouteDetail";
+import FollowersPage from './components/FollowersPage';
+import FollowingPage from './components/FollowingPage';
+import MessagesPage from './components/MessagesPage';
+import HistoryPage from './components/HistoryPage';
+import NotificationsPage from "./components/NotificationsPage";
+import SettingsPage from "./components/SettingsPage";
+
 
 const routes = [
     {
@@ -29,7 +36,13 @@ const routes = [
         { path: '/routes/new', element: <CreateRoute /> },
         { path: '/routes/:routeId', element: <RouteDetails /> },
         { path: '/community', element: <OurCommunity /> },
-        { path: '/profile', element: <Profile /> }
+        { path: '/community/profile', element: <Profile /> },
+        { path: '/community/followers', element: <FollowersPage /> },
+        { path: '/community/following', element: <FollowingPage /> },
+        { path: '/community/messages', element: <MessagesPage /> },
+        { path: '/community/history', element: <HistoryPage/> },
+        { path: '/community/settings', element: <SettingsPage /> },
+        { path: '/community/notifications', element: <NotificationsPage/> },
       ]
     }
   ];

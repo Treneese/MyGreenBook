@@ -1,54 +1,50 @@
-// src/components/Header.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
 
-function Header({  logoutUser }) {
- 
+function Header({ isLoggedIn, logoutUser }) {
   function handleLogout() {
-      fetch('/logout', '/login' , {
-          method: 'DELETE'
-      }).then( resp => {
-          if (resp.ok) {
-             
-              logoutUser()
-          }
-      })
+    fetch('/logout', {
+      method: 'DELETE'
+    }).then(resp => {
+      if (resp.ok) {
+        logoutUser();
+      }
+    });
   }
+
   return (
     <header className="header">
-       <img src='/BonVoyageLogo.png'  alt='Logo' className="Bon-Voyage-Logo" />
+      <div className="logo">
+      <img src="/BonVoyageLogo.png" alt="Logo" className="Bon-Voyage-Logo" />
+      </div>
       <nav className="nav">
         <ul className="nav-list">
           {/* <li className="nav-item">
             <Link to="/">Home</Link>
-          </li> */} 
+          </li> */}
           <li className="nav-item">
             <Link to="/places">Places</Link>
           </li>
           <li className="nav-item">
-            <Link to="/routes"> Route</Link>
+            <Link to="/routes">Route</Link>
           </li>
           <li className="nav-item">
             <Link to="/map">Map</Link>
           </li>
           <li className="nav-item">
-            <Link to="/community">OurCommunity</Link>
+            <Link to="/community">Our Community</Link>
           </li>
-          <li className="nav-item">
-            <Link to="/profile">Profile</Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/login">Login</Link>
-          </li>
-          {/* <li className="nav-item">
-            <Link to="/register">Register</Link>
-          </li> */}
         </ul>
       </nav>
-      <button onClick={handleLogout}>Logout</button>
+      {isLoggedIn ? (
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
+      ) : (
+        <Link to="/login" className="login-button">Login</Link>
+      )}
     </header>
   );
-};
+}
 
 export default Header;
+
