@@ -8,7 +8,7 @@ from flask_restful import Resource
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import emit
 from config import db, bcrypt, socketio, api, app
-from models import User, Place, Route, Review, SafetyMark, Comment
+from models import User, Place, Route, Review, SafetyMark, Comment, Follow, History, Notification, Message
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -411,55 +411,83 @@ class AddCommentById(Resource):
 # Register the resource with the Flask API
 api.add_resource(AddCommentById, '/api/reviews/<int:review_id>/comments')
 
+# class Follow(Resource):
+#     def post(self, user_id):
+#         follow_user = User.query.get(user_id)
+#         follow_user = User.query.get(user_id)
+#         if follow_user:
+#             current_user = User.query.get(current_user_id)
+#             if follow_user not in current_user.following:
+#                 current_user.following.append(follow_user)
+#                 db.session.commit()
+#                 return user_schema.make_response(current_user)
+#         return make_response({'message': 'User not found'}), 404
 
-@app.route('/follow/<int:user_id>', methods=['POST'])
-def follow(user_id):
-    follow_user = User.query.get(user_id)
-    if follow_user:
-        current_user = User.query.get(current_user_id)
-        if follow_user not in current_user.following:
-            current_user.following.append(follow_user)
-            db.session.commit()
-            return user_schema.jsonify(current_user)
-    return jsonify({'message': 'User not found'}), 404
+# api.add_resource(Follow, '/follow/<int:user_id>')
+class Follow(Resource):
+    def post(self, user_id):
+        follow_user = User.query.get(user_id)
+        if follow_user:
+            current_user_id = 1  # Example for demonstration
+            current_user = User.query.get(current_user_id)
+            if follow_user not in current_user.following:
+                current_user.following.append(follow_user)
+                db.session.commit()
+                return make_response({'user': {'id': current_user.id, 'username': current_user.username}}, 200)
+        return make_response({'message': 'User not found'}, 404)
+api.add_resource(Follow, '/follow/<int:user_id>')
 
-@app.route('/unfollow/<int:user_id>', methods=['POST'])
-def unfollow(user_id):
-    unfollow_user = User.query.get(user_id)
-    if unfollow_user:
-        current_user = User.query.get(current_user_id)
-        if unfollow_user in current_user.following:
-            current_user.following.remove(unfollow_user)
-            db.session.commit()
-            return user_schema.jsonify(current_user)
-    return jsonify({'message': 'User not found'}), 404
+class Unfollow(Resource):
+    def post(self, user_id):
+        unfollow_user = User.query.get(user_id)
+        if unfollow_user:
+            current_user_id = 1  # Example for demonstration
+            current_user = User.query.get(current_user_id)
+            if unfollow_user in current_user.following:
+                current_user.following.remove(unfollow_user)
+                db.session.commit()
+                return make_response({'user': {'id': current_user.id, 'username': current_user.username}}, 200)
+        return make_response({'message': 'User not found'}, 404)
+api.add_resource(Unfollow, '/unfollow/<int:user_id>')
 
-@app.route('/create_post', methods=['POST'])
-def create_post():
-    data = request.get_json()
-    new_post = Post(content=data['content'], user_id=current_user_id)
-    db.session.add(new_post)
-    db.session.commit()
-    return post_schema.jsonify(new_post)
+class CreatePost(Resource):
+    def post(self):
+        data = request.get_json()
+        current_user_id = 1  # Example for demonstration
+        new_post = Post(content=data['content'], user_id=current_user_id)
+        db.session.add(new_post)
+        db.session.commit()
+        return make_response({'post': {'id': new_post.id, 'content': new_post.content}}, 201)
+api.add_resource(CreatePost, '/create_post')
 
-@app.route('/messages', methods=['POST'])
-def send_message():
-    data = request.get_json()
-    new_message = Message(content=data['content'], sender_id=current_user_id, receiver_id=data['receiver_id'])
-    db.session.add(new_message)
-    db.session.commit()
-    return message_schema.jsonify(new_message)
 
-@app.route('/history', methods=['GET'])
 
-def get_history():
-    history = History.query.filter_by(user_id=current_user_id).all()
-    return jsonify(history_schema.dump(history, many=True))
+class SendMessage(Resource):
+    def post(self):
+        data = request.get_json()
+        current_user_id = 1  # Example for demonstration
+        new_message = Message(content=data['content'], sender_id=current_user_id, receiver_id=data['receiver_id'])
+        db.session.add(new_message)
+        db.session.commit()
+        return make_response({'message': {'id': new_message.id, 'content': new_message.content}}, 201)
+api.add_resource(SendMessage, '/messages')
 
-@app.route('/notifications', methods=['GET'])
-def get_notifications():
-    notifications = Notification.query.filter_by(user_id=current_user_id).all()
-    return jsonify(notification_schema.dump(notifications, many=True))
+
+class GetHistory(Resource):
+    def get(self):
+        current_user_id = 1  # Example for demonstration
+        history = History.query.filter_by(user_id=current_user_id).all()
+        history_list = [{'id': h.id, 'action': h.action, 'timestamp': h.timestamp.isoformat()} for h in history]
+        return make_response({'history': history_list}, 200)
+api.add_resource(GetHistory, '/history')
+
+class GetNotifications(Resource):
+    def get(self):
+        current_user_id = 1  # Example for demonstration
+        notifications = Notification.query.filter_by(user_id=current_user_id).all()
+        notification_list = [{'id': n.id, 'content': n.content, 'timestamp': n.timestamp.isoformat()} for n in notifications]
+        return make_response({'notifications': notification_list}, 200)
+api.add_resource(GetNotifications, '/notifications')
 
 # Index route
 @app.route('/')

@@ -4,7 +4,8 @@ from datetime import datetime
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
-
+from sqlalchemy import Table, Column, Integer, String, Boolean, Float, ForeignKey, Text, DateTime
+from sqlalchemy.orm import relationship
 # Local imports
 from config import db, bcrypt
 
@@ -32,10 +33,18 @@ class User(db.Model, SerializerMixin):
     safety_marks = db.relationship('SafetyMark', backref='user', lazy=True)
     routes = db.relationship('Route', backref='user', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
-    followers = db.relationship('User', secondary='follower', 
-                                primaryjoin=(id==Follower.following_id), 
-                                secondaryjoin=(id==Follower.follower_id),
-                                backref='following')
+    following = relationship(
+        'Follow',
+        foreign_keys='Follow.follower_id',
+        backref='follower_user',
+        lazy='dynamic'
+    )
+    followers = relationship(
+        'Follow',
+        foreign_keys='Follow.following_id',
+        backref='following_user',
+        lazy='dynamic'
+    )
     @validates('username')
     def validate_username(self, key, username):
         if not username or len(username) < 3:
@@ -218,6 +227,8 @@ def __repr__(self):
         return f'<Comment id={self.id} user_id={self.user_id} review_id={self.review_id}>'
 
 class Message(db.Model):
+    __tablename__ = 'messages'
+
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -225,45 +236,40 @@ class Message(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Notification(db.Model):
+    __tablename__ = 'notifications'
+
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 class History(db.Model):
+    __tablename__ = 'history'
+
     id = db.Column(db.Integer, primary_key=True)
     action = db.Column(db.String(150), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    class Follower(db.Model):
+class Follow(db.Model, SerializerMixin):
+    __tablename__ = 'follows'
+    
     id = db.Column(db.Integer, primary_key=True)
-    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    following_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    following_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.now())
 
-# Schemas
-    class UserSchema(ma.SQLAlchemyAutoSchema):
-        class Meta:
-            model = User
+    follower = relationship('User', foreign_keys=[follower_id], backref='following_associations')
+    following = relationship('User', foreign_keys=[following_id], backref='follower_associations')
 
-    class PostSchema(ma.SQLAlchemyAutoSchema):
-        class Meta:
-            model = Post
+class Follower(db.Model):
+    __tablename__ = 'followers'
 
-    class MessageSchema(ma.SQLAlchemyAutoSchema):
-        class Meta:
-            model = Message
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    class NotificationSchema(ma.SQLAlchemyAutoSchema):
-        class Meta:
-            model = Notification
+class Following(db.Model):
+    __tablename__ = 'followings'
 
-    class HistorySchema(ma.SQLAlchemyAutoSchema):
-        class Meta:
-            model = History
-
-    user_schema = UserSchema()
-    post_schema = PostSchema()
-    message_schema = MessageSchema()
-    notification_schema = NotificationSchema()
-    history_schema = HistorySchema()
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
