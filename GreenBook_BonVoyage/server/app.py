@@ -2,13 +2,12 @@
 
 # Import routes after initializing the extensions
 
-# from flask import request, jsonify
 from flask import Flask, request, jsonify, session, make_response
 from flask_restful import Resource
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import emit
 from config import db, bcrypt, socketio, api, app
-from models import User, Place, Route, Review, SafetyMark, Comment, Follow, History, Notification, Message
+from models import User, Place, Route, Review, SafetyMark, Comment, Follow, History, Notification, Message, Conversation, Story
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -371,10 +370,6 @@ class ReviewById(Resource):
 
 api.add_resource(ReviewById, '/api/reviews/<int:review_id>')
 
-# class PlaceByIdReview(Resource):
-#     def get(self,review_id):
-
-# api.add_resource(ReviewById, '/api/places/<int:place_id>/reviews')
 
 
 class LikeReviewById(Resource):
@@ -397,81 +392,130 @@ class AddCommentById(Resource):
             if not content or not user_id:
                 return make_response({'error': 'Content and user_id are required'}, 400)
 
-            # Create a new Comment object and add it to the database
+            
             comment = Comment(content=content, user_id=user_id, review_id=review_id)
             db.session.add(comment)
             db.session.commit()
 
-            # Return the new comment data in JSON format
+            
             return make_response(comment.to_dict(), 201)
 
         except Exception as e:
             return make_response({'error': str(e)}, 500)
 
-# Register the resource with the Flask API
+
 api.add_resource(AddCommentById, '/api/reviews/<int:review_id>/comments')
 
-# class Follow(Resource):
-#     def post(self, user_id):
-#         follow_user = User.query.get(user_id)
-#         follow_user = User.query.get(user_id)
-#         if follow_user:
-#             current_user = User.query.get(current_user_id)
-#             if follow_user not in current_user.following:
-#                 current_user.following.append(follow_user)
-#                 db.session.commit()
-#                 return user_schema.make_response(current_user)
-#         return make_response({'message': 'User not found'}), 404
-
-# api.add_resource(Follow, '/follow/<int:user_id>')
-class Follow(Resource):
+class FollowUser(Resource):
     def post(self, user_id):
-        follow_user = User.query.get(user_id)
+        follow_user = Follow.query.get(user_id)
         if follow_user:
-            current_user_id = 1  # Example for demonstration
+            current_user_id = 1  # Replace with the actual authenticated user ID
             current_user = User.query.get(current_user_id)
             if follow_user not in current_user.following:
                 current_user.following.append(follow_user)
                 db.session.commit()
                 return make_response({'user': {'id': current_user.id, 'username': current_user.username}}, 200)
         return make_response({'message': 'User not found'}, 404)
-api.add_resource(Follow, '/follow/<int:user_id>')
 
-class Unfollow(Resource):
-    def post(self, user_id):
-        unfollow_user = User.query.get(user_id)
+api.add_resource(FollowUser, '/follow/<int:user_id>')
+
+class UnfollowUser(Resource):
+    def delete(self, user_id):
+        unfollow_user = Follow.query.get(user_id)
         if unfollow_user:
-            current_user_id = 1  # Example for demonstration
+            current_user_id = 1  # Replace with the actual authenticated user ID
             current_user = User.query.get(current_user_id)
             if unfollow_user in current_user.following:
                 current_user.following.remove(unfollow_user)
                 db.session.commit()
                 return make_response({'user': {'id': current_user.id, 'username': current_user.username}}, 200)
         return make_response({'message': 'User not found'}, 404)
-api.add_resource(Unfollow, '/unfollow/<int:user_id>')
 
-class CreatePost(Resource):
+api.add_resource(UnfollowUser, '/unfollow/<int:user_id>')
+
+class GetFollowers(Resource):
+    def get(self, user_id):
+        user = Follow.query.get(user_id)
+        if user:
+            followers = [
+                {'id': follower.id, 'username': follower.username, 'profile_picture': follower.profile_picture}
+                for follower in user.followers
+            ]
+            return make_response({'followers': followers}, 200)
+        return make_response({'message': 'User not found'}, 404)
+
+api.add_resource(GetFollowers, '/api/followers/<int:user_id>')
+
+class GetFollowing(Resource):
+    def get(self, user_id):
+        user = Follow.query.get(user_id)
+        if user:
+            following = [
+                {'id': followed.id, 'username': followed.username, 'profile_picture': followed.profile_picture}
+                for followed in user.following
+            ]
+            return make_response({'following': following}, 200)
+        return make_response({'message': 'User not found'}, 404)
+
+api.add_resource(GetFollowing, '/api/following/<int:user_id>')
+
+class CreateReview(Resource):
     def post(self):
         data = request.get_json()
         current_user_id = 1  # Example for demonstration
-        new_post = Post(content=data['content'], user_id=current_user_id)
-        db.session.add(new_post)
+        new_review = Review(content=data['content'], user_id=current_user_id)
+        db.session.add(new_review)
         db.session.commit()
-        return make_response({'post': {'id': new_post.id, 'content': new_post.content}}, 201)
-api.add_resource(CreatePost, '/create_post')
-
-
+        return make_response({'post': {'id': new_review.id, 'content': new_review.content}}, 201)
+api.add_resource(CreateReview, '/api/create_review')
 
 class SendMessage(Resource):
+
     def post(self):
         data = request.get_json()
-        current_user_id = 1  # Example for demonstration
-        new_message = Message(content=data['content'], sender_id=current_user_id, receiver_id=data['receiver_id'])
-        db.session.add(new_message)
-        db.session.commit()
-        return make_response({'message': {'id': new_message.id, 'content': new_message.content}}, 201)
-api.add_resource(SendMessage, '/messages')
+        sender_id = data['sender_id']  # Expecting sender_id to be provided in the request
+        content = data['content']
+        recipients = data['recipients']
 
+        # Find a conversation with these participants
+        conversation = Conversation.query.filter(Conversation.participants.any(User.id == sender_id))
+        for recipient in recipients:
+            conversation = conversation.filter(Conversation.participants.any(User.id == recipient))
+
+        conversation = conversation.first()
+
+        # If no conversation exists, create a new one
+        if not conversation:
+            conversation = Conversation()
+            db.session.add(conversation)
+            conversation.participants.extend(User.query.filter(User.id.in_([sender_id] + recipients)).all())
+
+        # Create and save the message
+        message = Message(content=content, sender_id=sender_id, conversation=conversation)
+        db.session.add(message)
+        db.session.commit()
+
+        return make_response({'message': 'Message sent'}, 201)
+
+api.add_resource(SendMessage, '/api/messages')
+
+
+class GetConversations(Resource):
+
+    def get(self):
+        user_id = request.args.get('user_id')  # Expecting user_id as a query parameter
+        conversations = Conversation.query.filter(Conversation.participants.any(User.id == user_id)).all()
+        
+        result = []
+        for conversation in conversations:
+            messages = [{'content': msg.content, 'sender': msg.sender.username, 'timestamp': msg.timestamp} for msg in conversation.messages]
+            participants = [{'username': user.username, 'profile_picture': user.profile_picture} for user in conversation.participants]
+            result.append({'messages': messages, 'users': user_id})
+        
+        return make_response(result, 200)
+
+api.add_resource(GetConversations, '/api/conversations')
 
 class GetHistory(Resource):
     def get(self):
@@ -479,7 +523,7 @@ class GetHistory(Resource):
         history = History.query.filter_by(user_id=current_user_id).all()
         history_list = [{'id': h.id, 'action': h.action, 'timestamp': h.timestamp.isoformat()} for h in history]
         return make_response({'history': history_list}, 200)
-api.add_resource(GetHistory, '/history')
+api.add_resource(GetHistory, '/api/history')
 
 class GetNotifications(Resource):
     def get(self):
@@ -487,7 +531,34 @@ class GetNotifications(Resource):
         notifications = Notification.query.filter_by(user_id=current_user_id).all()
         notification_list = [{'id': n.id, 'content': n.content, 'timestamp': n.timestamp.isoformat()} for n in notifications]
         return make_response({'notifications': notification_list}, 200)
-api.add_resource(GetNotifications, '/notifications')
+api.add_resource(GetNotifications, '/api/notifications')
+
+class StoryResource(Resource):
+    def get(self):
+        try:
+            stories = Story.query.all()
+            if not stories:
+                return make_response({'message': 'No stories found.'}, 404)
+            return make_response(jsonify([story.to_dict() for story in stories]), 200)
+        except Exception as e:
+            return make_response({'error': f'An error occurred: {str(e)}'}, 500)
+
+    def post(self):
+        try:
+            data = request.get_json()
+            if not data or 'photo' not in data or 'user' not in data or 'name' not in data['user']:
+                return make_response({'error': 'Invalid input. Must provide photo URL and user name.'}, 400)
+
+            new_story = Story(photo=data['photo'], user_name=data['user']['name'])
+            db.session.add(new_story)
+            db.session.commit()
+            return make_response({'message': 'Story created successfully', 'story': new_story.to_dict()}, 201)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return make_response({'error': f'An error occurred: {str(e)}'}, 400)
+
+# Add resource to API
+api.add_resource(StoryResource, '/api/stories')
 
 # Index route
 @app.route('/')
