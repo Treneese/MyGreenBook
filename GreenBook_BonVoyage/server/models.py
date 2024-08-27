@@ -24,7 +24,7 @@ conversation_user_association = db.Table('conversation_user_association',
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ('-created_at', '-updated_at', '-_password_hash', '-safety_marks.user', '-routes.user', '-reviews', '-following.user', '-followers.user')
+    serialize_rules = ('-created_at', '-updated_at', '-_password_hash', '-safety_marks.user', '-routes.user', '-reviews', '-following.user', '-follower.user', '-sent_messages', '-received_messages', '-comments', '-notifications.user', '-user_history', '-user_stories')
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -38,13 +38,18 @@ class User(db.Model, SerializerMixin):
     last_name = db.Column(db.String(500), default='Doe')
     location = db.Column(db.String(500), default='Huston,TX')
 
+    safety_marks = db.relationship('SafetyMark', back_populates='user', lazy=True)
+    routes = db.relationship('Route', back_populates='user', lazy=True)
+    reviews = db.relationship('Review', back_populates='user', lazy=True)
+    followers = db.relationship('Follow', foreign_keys='Follow.following_id', back_populates='following')
+    followings = db.relationship('Follow', foreign_keys='Follow.follower_id', back_populates='follower')
+    sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', back_populates='sender', lazy='dynamic')
+    received_messages = db.relationship('Message', foreign_keys='Message.recipient_id', back_populates='recipient', lazy='dynamic')
+    comments = db.relationship('Comment', back_populates='user', lazy=True)  
+    notifications = db.relationship('Notification', back_populates='user', lazy=True)
+    history = db.relationship('History', back_populates='user', lazy=True)
+    stories = db.relationship('Story', back_populates='user', lazy=True)
 
-    safety_marks = db.relationship('SafetyMark', backref='user', lazy=True)
-    routes = db.relationship('Route', backref='user', lazy=True)
-    reviews = db.relationship('Review', backref='user', lazy=True)
-    followers = db.relationship('Follow', foreign_keys='Follow.following_id', backref='following_user', lazy='dynamic')
-    following = db.relationship('Follow', foreign_keys='Follow.follower_id', backref='follower_user', lazy='dynamic', overlaps="follower_user,following")
-   
     @validates('username')
     def validate_username(self, key, username):
         if not username or len(username) < 3:
@@ -94,8 +99,8 @@ class Place(db.Model, SerializerMixin):
     address = db.Column(db.String(200), nullable=False)
     safety_rating = db.Column(db.Float, nullable=False)
 
-    reviews = db.relationship('Review', backref='place', lazy=True)
-    safety_marks = db.relationship('SafetyMark', backref='place', lazy=True, cascade='all, delete-orphan')
+    reviews = db.relationship('Review', back_populates='place', lazy=True)
+    safety_marks = db.relationship('SafetyMark', back_populates='place', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
@@ -131,6 +136,7 @@ class Route(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
     places = db.relationship('Place', secondary=route_place_association, backref=db.backref('routes', lazy='dynamic'))
+    user = db.relationship('User', back_populates='routes')
 
     def to_dict(self):
         return {
@@ -152,7 +158,7 @@ class Route(db.Model, SerializerMixin):
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
 
-    serialize_rules = ('-place.reviews', '-user.reviews', '-comments.review', '-likes.review')
+    serialize_rules = ('-place.reviews', '-user.reviews', '-review_comments', '-review_likes')
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -162,8 +168,11 @@ class Review(db.Model, SerializerMixin):
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    likes = db.relationship('Like', backref='review', lazy=True,)
-    comments = db.relationship('Comment', backref='review', lazy=True, cascade='all, delete-orphan')
+
+    place = db.relationship('Place', back_populates='reviews')
+    user = db.relationship('User', back_populates='reviews') 
+    likes = db.relationship('Like', back_populates='review', lazy=True,)
+    comments = db.relationship('Comment', back_populates='review', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
@@ -204,9 +213,11 @@ class Like(db.Model, SerializerMixin):
     review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False)
     liked_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    user = db.relationship('User', backref='user_likes')
+    review = db.relationship('Review', back_populates='likes')
 
     def __repr__(self):
-            return f'<Review id={self.id} user_id={self.user_id}>'
+            return f'<Like id={self.id} user_id={self.user_id} review_id={self.review_id}>'
 
 class SafetyMark(db.Model, SerializerMixin):
     __tablename__ = 'safetymarks'
@@ -218,6 +229,9 @@ class SafetyMark(db.Model, SerializerMixin):
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    place = db.relationship('Place', back_populates='safety_marks')
+    user = db.relationship('User', back_populates='safety_marks')
 
     @validates('is_safe')
     def validate_is_safe(self, key, is_safe):
@@ -232,7 +246,7 @@ class SafetyMark(db.Model, SerializerMixin):
 class Comment(db.Model, SerializerMixin):
     __tablename__ = 'comments'
 
-    serialize_rules = ('-review.comments', '-user.reviews')
+    serialize_rules = ('-review.review_comments', '-user.user_comments')
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -240,7 +254,8 @@ class Comment(db.Model, SerializerMixin):
     review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
-    user = relationship('User', backref='comments')
+    user = db.relationship('User', back_populates='comments')
+    review = db.relationship('Review', back_populates='comments')
 
     def to_dict(self):
         return {
@@ -252,12 +267,12 @@ class Comment(db.Model, SerializerMixin):
         }
 
 def __repr__(self):
-        return f'<Comment id={self.id} user_id={self.user_id}>'
+        return f'<Comment id={self.id} user_id={self.user_id} review_id={self.review_id}>'
 
 class Message(db.Model, SerializerMixin):
     __tablename__ = 'messages'
 
-    serialize_rules = ('-sender', '-conversation')
+    serialize_rules = ('-sender', '-recipient', '-conversation')
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -265,8 +280,9 @@ class Message(db.Model, SerializerMixin):
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
-    sender = relationship('User', foreign_keys=[sender_id], backref='sent_messages')
-    recipient = relationship('User', foreign_keys=[recipient_id], backref='received_messages')
+
+    sender = db.relationship('User', foreign_keys=[sender_id], back_populates='sent_messages')
+    recipient = db.relationship('User', foreign_keys=[recipient_id], back_populates='received_messages')
     conversation = db.relationship('Conversation', backref='messages')
 
 def __repr__(self):
@@ -275,15 +291,15 @@ def __repr__(self):
 class Conversation(db.Model, SerializerMixin):
     __tablename__ = 'conversation'
 
-    serialize_rules = ('-user1', '-user2')
+    serialize_rules = ('-sender', '-recipient', '-messages')
 
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    sender = relationship('User', foreign_keys=[sender_id], backref='sent_messages')
-    recipient = relationship('User', foreign_keys=[recipient_id], backref='received_messages')
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_conversations')
+    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='received_conversations')
 
 def __repr__(self):
        return f'<Conversation id={self.id} sender_id={self.sender_id} recipient_id={self.recipient_id}>'
@@ -291,29 +307,37 @@ def __repr__(self):
 class Notification(db.Model, SerializerMixin):
     __tablename__ = 'notifications'
 
-    serialize_rules = ('-user')
+    serialize_rules = ('-user_notifications.notifications')
 
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
+    message = db.Column(db.String(500), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = relationship('User', backref='notifications')
+    user = db.relationship('User', back_populates='notifications')
+
+def to_dict(self):
+        return {
+            'id': self.id,
+            'message': self.message,
+            'timestamp': self.timestamp,
+            'user_id': self.user_id
+        }
 
 def __repr__(self):
-        return f'<Notification id={self.id} user_id={self.user_id} content={self.content[:20]}>'
+        return f'<Notification id={self.id} message={self.message} user_id={self.user_id} content={self.content[:20]}>'
 
 class History(db.Model, SerializerMixin):
     __tablename__ = 'history'
 
-    serialize_rules = ('-user')
+    serialize_rules = ('-user_history')
 
     id = db.Column(db.Integer, primary_key=True)
     action = db.Column(db.String(150), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = relationship('User', backref='history')
+    user = db.relationship('User', back_populates='history')
 
 def __repr__(self):
         return f'<History id={self.id} user_id={self.user_id} action={self.action[:20]}>'
@@ -323,16 +347,17 @@ class Follow(db.Model, SerializerMixin):
 
     serialize_rules = ()
     
+ 
     id = db.Column(db.Integer, primary_key=True)
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     following_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    timestamp = db.Column(db.DateTime, default=db.func.now())
 
-    follower = relationship('User', foreign_keys=[follower_id], backref='following_relationships')
-    following = relationship('User', foreign_keys=[following_id], backref='follower_relationships')
+    follower = db.relationship('User', foreign_keys=[follower_id], back_populates='following')
+    following = db.relationship('User', foreign_keys=[following_id], back_populates='followers')
 
-def __repr__(self):
-      return f'<Follow id={self.id} follower_id={self.follower_id} following_id={self.following_id}>'
+    def __repr__(self):
+        return f'<Follow id={self.id} follower_id={self.follower_id} following_id={self.following_id}>'
+
 
 class Follower(db.Model, SerializerMixin):
     __tablename__ = 'followers'
@@ -342,9 +367,9 @@ class Follower(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    user = relationship('User', backref='followers')
+    user = db.relationship('User', back_populates='following')
 
-def __repr__(self):
+    def __repr__(self):
         return f'<Follower id={self.id} user_id={self.user_id}>'
 
 class Following(db.Model, SerializerMixin):
@@ -355,20 +380,20 @@ class Following(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    user = relationship('User', backref='followings')
-    
-def __repr__(self):
+    user = db.relationship('User', back_populates='follower')
+
+    def __repr__(self):
         return f'<Following id={self.id} user_id={self.user_id}>'
 
 class Story(db.Model, SerializerMixin):
     __tablename__ = 'stories'
 
-    serialize_rules = ()
+    serialize_rules = ('user_stories')
     id = db.Column(db.Integer, primary_key=True)
     media = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    user = relationship('User', backref='stories')
+    user = db.relationship('User', back_populates='stories')
 
     def to_dict(self):
         return {
@@ -378,5 +403,5 @@ class Story(db.Model, SerializerMixin):
         }
     
     def __repr__(self):
-        return f'<Following id={self.id} media={self.media} user_id={self.user_id}>'
+        return f'<Story id={self.id} media={self.media} user_id={self.user_id}>'
 

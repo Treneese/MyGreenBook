@@ -336,11 +336,15 @@ def seed_followings():
 
 def seed_stories():
     stories = [
-        Story(media='https://www.youtube.com/shorts/EBDrxKcyTFk?feature=share', user_id=1),
-        Story(media='https://www.youtube.com/shorts/gbrE9RqQimE?feature=share', user_id=2),
+        Story(media='https://www.youtube.com/shorts/EBDrxKcyTFk?feature=share', user_id=11),
+        Story(media='https://www.youtube.com/shorts/gbrE9RqQimE?feature=share', user_id=21),
+        Story(media='client/public/Stories/2099568-hd_1920_1080_30fps.mp4', user_id=14),
+        Story(media='client/public/Stories/2953632-uhd_4096_2160_24fps.mp4', user_id=2),
+        Story(media='client/public/Stories/3015527-hd_1920_1080_24fps.mp4', user_id=7),
+        Story(media='client/public/Stories/3177175-hd_1920_1080_30fps.mp4', user_id=8),
     ]
 
-    # Adding the data to the table
+    
     db.session.add_all(stories)
     db.session.commit()
 
@@ -350,12 +354,15 @@ def recreate_and_seed_db():
         with app.app_context():
             db.drop_all()
             db.create_all()
+
+            # Seed each table
             seed_users()
             seed_places()
             seed_routes()
             seed_reviews()
-            seed_likes()
             seed_safety_marks()
+            seed_comments()
+            seed_likes()
             seed_messages()
             seed_conversations()
             seed_notifications()
