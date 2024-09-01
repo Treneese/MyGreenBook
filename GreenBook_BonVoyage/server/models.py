@@ -20,36 +20,53 @@ conversation_user_association = db.Table('conversation_user_association',
     db.Column('conversation_id', db.Integer, db.ForeignKey('conversation.id'), primary_key=True)
 )
 
+follow_user_association = db.Table('follow_user_association',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('follow_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ('-created_at', '-updated_at', '-_password_hash', '-safety_marks.user', '-routes.user', '-reviews', '-following.user', '-follower.user', '-sent_messages', '-received_messages', '-comments', '-notifications.user', '-user_history', '-user_stories')
+    serialize_rules = (
+        '-created_at', '-updated_at', '-_password_hash', '-safety_marks.user', 
+        '-routes.user', '-reviews', '-followings', '-followers', 
+        '-sent_messages', '-received_messages', '-comments', '-notifications.user', 
+        '-user_history', '-user_stories'
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     _password_hash = db.Column(db.String(128), nullable=False)
-    bio = db.Column(db.String(500), default='Hi, I am passionate about discovering hidden gems and sharing travel tips from my adventures around the world. Join me as I explore vibrant cities, serene landscapes, and everything in between, helping you make the most of your journeys.')
+    bio = db.Column(db.String(500), default='Hi, I am passionate about discovering hidden gems and sharing travel tips from my adventures around the world.')
     image = db.Column(db.String(500), default='https://static.vecteezy.com/system/resources/previews/016/774/588/original/3d-user-icon-on-transparent-background-free-png.png')
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     first_name = db.Column(db.String(500), default='John')
     last_name = db.Column(db.String(500), default='Doe')
-    location = db.Column(db.String(500), default='Huston,TX')
+    location = db.Column(db.String(500), default='Houston, TX')
 
     safety_marks = db.relationship('SafetyMark', back_populates='user', lazy=True)
     routes = db.relationship('Route', back_populates='user', lazy=True)
     reviews = db.relationship('Review', back_populates='user', lazy=True)
-    followers = db.relationship('Follow', foreign_keys='Follow.following_id', back_populates='following')
-    followings = db.relationship('Follow', foreign_keys='Follow.follower_id', back_populates='follower')
-    sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', back_populates='sender', lazy='dynamic')
-    received_messages = db.relationship('Message', foreign_keys='Message.recipient_id', back_populates='recipient', lazy='dynamic')
     comments = db.relationship('Comment', back_populates='user', lazy=True)  
     notifications = db.relationship('Notification', back_populates='user', lazy=True)
     history = db.relationship('History', back_populates='user', lazy=True)
     stories = db.relationship('Story', back_populates='user', lazy=True)
-
+    
+    # # Many-to-many self-referential relationships
+    following = db.relationship(
+        'User',
+        secondary=follow_user_association,
+        primaryjoin=id==follow_user_association.c.user_id,
+        secondaryjoin=id==follow_user_association.c.follow_id,
+        backref=db.backref('followers', lazy='dynamic'),
+        lazy='dynamic'
+    )
+  
+    sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', back_populates='sender', lazy='dynamic')
+    received_messages = db.relationship('Message', foreign_keys='Message.recipient_id', back_populates='recipient', lazy='dynamic')
     @validates('username')
     def validate_username(self, key, username):
         if not username or len(username) < 3:
@@ -211,7 +228,7 @@ class Like(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False)
-    liked_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    liked_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship('User', backref='user_likes')
     review = db.relationship('Review', back_populates='likes')
@@ -307,7 +324,7 @@ def __repr__(self):
 class Notification(db.Model, SerializerMixin):
     __tablename__ = 'notifications'
 
-    serialize_rules = ('-user_notifications.notifications')
+    serialize_rules = ('-user.notifications')
 
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.String(500), nullable=False)
@@ -352,38 +369,8 @@ class Follow(db.Model, SerializerMixin):
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     following_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    follower = db.relationship('User', foreign_keys=[follower_id], back_populates='following')
-    following = db.relationship('User', foreign_keys=[following_id], back_populates='followers')
-
     def __repr__(self):
         return f'<Follow id={self.id} follower_id={self.follower_id} following_id={self.following_id}>'
-
-
-class Follower(db.Model, SerializerMixin):
-    __tablename__ = 'followers'
-
-    serialize_rules = ()
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    user = db.relationship('User', back_populates='following')
-
-    def __repr__(self):
-        return f'<Follower id={self.id} user_id={self.user_id}>'
-
-class Following(db.Model, SerializerMixin):
-    __tablename__ = 'followings'
-
-    serialize_rules = ()
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    user = db.relationship('User', back_populates='follower')
-
-    def __repr__(self):
-        return f'<Following id={self.id} user_id={self.user_id}>'
 
 class Story(db.Model, SerializerMixin):
     __tablename__ = 'stories'

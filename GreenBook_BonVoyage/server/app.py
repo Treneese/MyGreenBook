@@ -297,29 +297,29 @@ api.add_resource(SafetyMarkById, '/api/safety_marks/<int:safety_mark_id>')
 class Reviews(Resource):
 
     def get(self):
-        # reviews = Review.query.all()
-        # review_list = [review.to_dict() for review in reviews]
-        # return make_response((review_list), 200)
-    
         reviews = Review.query.all()
-        reviews_list = []
-        for review in reviews:
-            review_data = {
-                'id': review.id,
-                'content': review.content,
-                'rating': review.rating,
-                'place': {
-                    'id': review.place.id,
-                    'name': review.place.name
-                },
-                'user': {
-                    'id': review.user.id,
-                    'username': review.user.username,
-                    'profile_image': review.user.image
-                }
-            }
-            reviews_list.append(review_data)
-        return make_response((reviews_list), 200)
+        review_list = [review.to_dict() for review in reviews]
+        return make_response((review_list), 200)
+    
+        # reviews = Review.query.all()
+        # reviews_list = []
+        # for review in reviews:
+        #     review_data = {
+        #         'id': review.id,
+        #         'content': review.content,
+        #         'rating': review.rating,
+        #         'place': {
+        #             'id': review.place.id,
+        #             'name': review.place.name
+        #         },
+        #         'user': {
+        #             'id': review.user.id,
+        #             'username': review.user.username,
+        #             'profile_image': review.user.image
+        #         }
+        #     }
+        #     reviews_list.append(review_data)
+        # return make_response((reviews_list), 200)
     
     def post(self):
         data = request.get_json()
@@ -410,7 +410,7 @@ class FollowUser(Resource):
     def post(self, user_id):
         follow_user = Follow.query.get(user_id)
         if follow_user:
-            current_user_id = 1  # Replace with the actual authenticated user ID
+            current_user_id = 1  
             current_user = User.query.get(current_user_id)
             if follow_user not in current_user.following:
                 current_user.following.append(follow_user)
@@ -424,7 +424,7 @@ class UnfollowUser(Resource):
     def delete(self, user_id):
         unfollow_user = Follow.query.get(user_id)
         if unfollow_user:
-            current_user_id = 1  # Replace with the actual authenticated user ID
+            current_user_id = 1  
             current_user = User.query.get(current_user_id)
             if unfollow_user in current_user.following:
                 current_user.following.remove(unfollow_user)
@@ -463,7 +463,7 @@ api.add_resource(GetFollowing, '/api/following/<int:user_id>')
 class CreateReview(Resource):
     def post(self):
         data = request.get_json()
-        current_user_id = 1  # Example for demonstration
+        current_user_id = 1  
         new_review = Review(content=data['content'], user_id=current_user_id)
         db.session.add(new_review)
         db.session.commit()
@@ -474,7 +474,7 @@ class SendMessage(Resource):
 
     def post(self):
         data = request.get_json()
-        sender_id = data['sender_id']  # Expecting sender_id to be provided in the request
+        sender_id = data['sender_id'] 
         content = data['content']
         recipients = data['recipients']
 
@@ -504,7 +504,7 @@ api.add_resource(SendMessage, '/api/messages')
 class GetConversations(Resource):
 
     def get(self):
-        user_id = request.args.get('user_id')  # Expecting user_id as a query parameter
+        user_id = request.args.get('user_id') 
         conversations = Conversation.query.filter(Conversation.participants.any(User.id == user_id)).all()
         
         result = []
@@ -519,7 +519,7 @@ api.add_resource(GetConversations, '/api/conversations')
 
 class GetHistory(Resource):
     def get(self):
-        current_user_id = 1  # Example for demonstration
+        current_user_id = 1  
         history = History.query.filter_by(user_id=current_user_id).all()
         history_list = [{'id': h.id, 'action': h.action, 'timestamp': h.timestamp.isoformat()} for h in history]
         return make_response({'history': history_list}, 200)
@@ -527,7 +527,7 @@ api.add_resource(GetHistory, '/api/history')
 
 class GetNotifications(Resource):
     def get(self):
-        current_user_id = 1  # Example for demonstration
+        current_user_id = 1 
         notifications = Notification.query.filter_by(user_id=current_user_id).all()
         notification_list = [{'id': n.id, 'content': n.content, 'timestamp': n.timestamp.isoformat()} for n in notifications]
         return make_response({'notifications': notification_list}, 200)
