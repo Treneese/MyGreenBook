@@ -1,40 +1,39 @@
-// FollowersPage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './FollowingPage.css';
 import Sidebar from './Sidebar';
 
-const FollowingPage = () => {
+const FollowingPage = ({ userId }) => {
   const [following, setFollowing] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const fetchFollowing = async () => {
+      try {
+        const response = await axios.get(`/api/following/${userId}`);
+        setFollowing(response.data.following);
+      } catch (error) {
+        console.error('Error fetching following:', error);
+        setError('Failed to fetch following. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchFollowing();
-  }, []);
+  }, [userId]);
 
-  const fetchFollowing = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get('/api/following');
-      setFollowing(response.data);
-    } catch (error) {
-      console.error('Error fetching following:', error);
-      setError('Failed to fetch following. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
     <div className="following-page">
          <Sidebar />
-      {isLoading && <div>Loading...</div>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {following.map(following => (
-        <div key={following.id} className="following">
-          <img src={following.profilePhoto} alt={following.name} />
-          <p>{following.name}</p>
+      <h1>Following</h1>
+      {following.map(user => (
+        <div key={user.id} className="following-user">
+          <img src={user.profile_picture} alt={user.username} />
+          <p>{user.username}</p>
         </div>
       ))}
     </div>
@@ -42,3 +41,4 @@ const FollowingPage = () => {
 };
 
 export default FollowingPage;
+

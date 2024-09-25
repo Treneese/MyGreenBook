@@ -61,3 +61,30 @@ button {
 button:hover {
   background-color: #0eef3f;
 }
+
+/* Header styles */
+.header {
+  background-color: #020202;
+  padding: 20px 40px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensures header is on top of other content */
+  display: flex;
+}
+
+/* Main content styles */
+.main-content {
+  padding-top: 60px; /* Adjust based on header height to ensure content is below the header */
+  padding-left: 20px; /* Optional: Add padding for left alignment */
+  padding-right: 20px; /* Optional: Add padding for right alignment */
+  margin: 0 auto;
+  max-width: 1200px; /* Optional: Limit the width of the content */
+}
+
+/* Other global styles */
+img {
+  height: 40px;
+  width: 40px;
+}

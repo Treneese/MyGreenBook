@@ -1,5 +1,5 @@
-.sidebar {
-    width: 200px;
+/* .sidebar {
+    width: 30%;
     position: fixed;
     margin-top: 170px;
     top: 0;
@@ -9,7 +9,14 @@
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
   }
-  
+   */
+   .sidebar {
+    width: 30%;
+    padding: 20px;
+    background-color: #0bb408;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+  }
   .sidebar ul {
     list-style-type: none;
     padding: 0;
@@ -21,11 +28,11 @@
   
   .sidebar ul li a {
     text-decoration: none;
-    color: #333;
+    color:  #0bb408;
     font-size: 18px;
   }
   
   .sidebar ul li a:hover {
-    color: #007bff;
+    color: #ffee00;
   }
   

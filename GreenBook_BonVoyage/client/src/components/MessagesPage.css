@@ -1,0 +1,160 @@
+/* .messages-page {
+    padding: 20px;
+  }
+  
+  .conversation {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .participant {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .participant img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .message {
+    margin-bottom: 10px;
+  }
+  
+  .message p {
+    margin: 0;
+  }
+  /* MessagesPage.css */
+/* .messages-page {
+  display: flex;
+  height: 100vh;
+}
+
+.conversation-sidebar {
+  width: 30%;
+  padding: 20px;
+  background-color:  #0bb408;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.conversation-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.conversation-sidebar li {
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.conversation-participant img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.messages-content {
+  width: 70%;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.message {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #e8f0fe;
+  border-radius: 5px;
+}
+
+.message p {
+  margin: 0;
+}
+
+.message strong {
+  display: block;
+  margin-bottom: 5px;
+} */ */
+
+/* MessagesPage.css */
+.messages-page {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 30%;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: calc(100% - 90px);
+  padding: 8px;
+}
+
+.search-bar button {
+  padding: 8px;
+  margin-left: 10px;
+}
+
+.search-results {
+  margin-top: 20px;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.search-result-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.start-conversation {
+  margin-top: 20px;
+}
+
+.start-conversation button {
+  padding: 8px;
+}
+
+.messages-content {
+  width: 70%;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.message {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #e8f0fe;
+  border-radius: 5px;
+}
+
+.message p {
+  margin: 0;
+}
+
+.message strong {
+  display: block;
+  margin-bottom: 5px;
+}

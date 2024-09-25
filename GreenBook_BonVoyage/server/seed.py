@@ -318,10 +318,10 @@ def seed_stories():
         stories = [
             Story(media='https://www.youtube.com/shorts/EBDrxKcyTFk?feature=share', user_id=11),
             Story(media='https://www.youtube.com/shorts/gbrE9RqQimE?feature=share', user_id=21),
-            Story(media='client/public/Stories/2099568-hd_1920_1080_30fps.mp4', user_id=14),
-            Story(media='client/public/Stories/2953632-uhd_4096_2160_24fps.mp4', user_id=2),
-            Story(media='client/public/Stories/3015527-hd_1920_1080_24fps.mp4', user_id=7),
-            Story(media='client/public/Stories/3177175-hd_1920_1080_30fps.mp4', user_id=8),
+            Story(media='client/public/Stories/dumbuggy.mp4', user_id=14),
+            Story(media='client/public/Stories/asia2.mp4', user_id=2),
+            Story(media='client/public/Stories/man.mp4', user_id=7),
+            Story(media='client/public/Stories/asia.mp4', user_id=8),
         ]
 
         
