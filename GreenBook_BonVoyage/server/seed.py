@@ -2,7 +2,7 @@ from datetime import datetime
 from config import bcrypt
 from app import app, db
 from models import User, Place, Conversation, Follow, History, Notification, Review, Route, SafetyMark, Story, Comment, Message, Like
-
+# Filling the database with users
 def seed_users():
     try:
         users = [
@@ -33,7 +33,7 @@ def seed_users():
         print("Users seeded successfully!")
     except Exception as e:
         print(f"Error seeding users: {e}")
-
+# Filling the database with places
 def seed_places():
     try:
         places = [
@@ -58,10 +58,10 @@ def seed_places():
         print("Places seeded successfully!")
     except Exception as e:
         print(f"Error seeding places: {e}")
-
+# Filling the database with routes
 def seed_routes():
     try:
-     
+# Letting the system know the places we put in the database
         places = {
             "Kwame Nkrumah Memorial Park & Mausoleum": Place.query.filter_by(name='Kwame Nkrumah Memorial Park & Mausoleum').first(),
             "Black Cultural Archives": Place.query.filter_by(name='Black Cultural Archives').first(),
@@ -79,7 +79,7 @@ def seed_routes():
             'Martha Brae River': Place.query.filter_by(name='Martha Brae River').first(),
             'Trafalgar Square': Place.query.filter_by(name='Trafalgar Square').first(),
         }
-       
+# Filling in our routes according to the places
         routes = [
             Route(name="Tour of Accra", user_id=1, places=[places['Kwame Nkrumah Memorial Park & Mausoleum'], places['Moses Mabhida Stadium']]),
             Route(name="London Highlights", user_id=2, places=[places['Black Cultural Archives'], places['La Chèvre d’Or']]),
@@ -99,7 +99,7 @@ def seed_routes():
         print("Routes seeded successfully!")
     except Exception as e:
         print(f"Error seeding routes: {e}")
-
+# Filling the database with reviews
 def seed_reviews():
     try:
         reviews = [
@@ -129,7 +129,7 @@ def seed_reviews():
         print("Reviews seeded successfully!")
     except Exception as e:
         print(f"Error seeding reviews: {e}")
-
+# Filling the database with safety marks
 def seed_safety_marks():
     try:
         safety_marks = [
@@ -154,9 +154,10 @@ def seed_safety_marks():
         print("Safety marks seeded successfully!")
     except Exception as e:
         print(f"Error seeding safety marks: {e}")
-
+# Filling the database with comments
 def seed_comments():
     try:
+# Reminding the system of the reviews we set
         review_ids = {
             "Great place!": 1, "Amazing experience!": 2, "A must-visit!": 3, "Wonderful Experience!":4, "Absolutely Fantastic!":5,
             "Exceptional Service":6, "Great Atmosphere!":7, "Highly Recommended!":8, "Perfect Location!":9,
@@ -165,9 +166,9 @@ def seed_comments():
             "Fantastic Food!":19, "Wonderful Venue!":20,
         }
         reviews = {title: db.session.get(Review, review_ids[title]) for title in review_ids.keys()}
-
+# Filling in the comments acording to the reviews
         comments = [
-            # review_id=
+        
             Comment(content="I'm planning a trip there now love this!", user_id=1, review_id=1),
             Comment(content="What was your favorite part?", user_id=2, review_id=2),
             Comment(content="What was the food like?", user_id=3, review_id=4),
@@ -188,7 +189,7 @@ def seed_comments():
         print("Comments seeded successfully!")
     except Exception as e:
         print(f"Error seeding Comments: {e}")
-
+# Filling the database with likes
 def seed_likes():
     try:
         review_ids = {
@@ -215,18 +216,18 @@ def seed_likes():
         print("Likes seeded successfully!")
     except Exception as e:
         print(f"Error seeding Likes: {e}") 
-
+# Filling the database with messages
 def seed_messages():
     try:
         messages = [
-            # Make sure sender_id and recipient_id are correctly matched
+# Make sure sender_id and recipient_id are correctly matched
             Message(content='Hello, how are you?', sender_id=1, recipient_id=2, conversation_id=1),
             Message(content='I am good, thanks!', sender_id=2, recipient_id=1, conversation_id=1),
             Message(content='Are you coming to the event?', sender_id=3, recipient_id=4, conversation_id=2),
             Message(content='What time is it?', sender_id=4, recipient_id=3, conversation_id=2),
         ]
 
-        # Adding the data to the table
+# Adding the data to the table
         db.session.add_all(messages)
         db.session.commit()
 
@@ -234,22 +235,22 @@ def seed_messages():
     except Exception as e:
         print(f"Error seeding Messages: {e}")
 
-
+# Filling the database with conversations
 def seed_conversations():
     try:
         conversations = [
-            # Ensure that sender_id and recipient_id are valid user IDs
+# Ensure that sender_id and recipient_id are valid user IDs
             Conversation(sender_id=1, recipient_id=2),
             Conversation(sender_id=1, recipient_id=3),
         ]
 
-        # Adding the data to the table
+# Adding the data to the table
         db.session.add_all(conversations)
         db.session.commit()
         print("Conversations seeded successfully!")
     except Exception as e:
         print(f"Error seeding Conversations: {e}")
-
+# Filling the database with notifcations
 def seed_notifications():
     try:
         notifications = [
@@ -257,13 +258,13 @@ def seed_notifications():
             Notification(message='Your review got a like', user_id=2),
         ]
 
-        # Adding the data to the table
+# Adding the data to the table
         db.session.add_all(notifications)
         db.session.commit()
         print("Notfication seeded successfully!")
     except Exception as e:
         print(f"Error seeding Notification: {e}") 
-
+# Filling the database with history
 def seed_history():
     try:
         history = [
@@ -271,13 +272,13 @@ def seed_history():
             History(action='User updated profile', user_id=2),
         ]
 
-        # Adding the data to the table
+# Adding the data to the table
         db.session.add_all(history)
         db.session.commit()
         print("History seeded successfully!")
     except Exception as e:
         print(f"Error seeding History: {e}") 
-
+#filling the database with follows
 def seed_follows():
     try:
         follow_data = {
@@ -294,11 +295,11 @@ def seed_follows():
             11: [19, 8, 15, 20, 13, 11]
         }
 
-        # Retrieve users
+# Retrieve users
         users = User.query.filter(User.id.in_(follow_data.keys())).all()
         user_dict = {user.id: user for user in users}
 
-    # Add follows
+# Add follows
         for user_id, follow_ids in follow_data.items():
             user = user_dict.get(user_id)
             if user:
@@ -312,7 +313,7 @@ def seed_follows():
     except Exception as e:
         print(f"Error seeding Follows: {e}") 
 
-
+# Filling the database with stories
 def seed_stories():
     try:
         stories = [
@@ -338,7 +339,7 @@ def recreate_and_seed_db():
             db.drop_all()
             db.create_all()
 
-            # Seed each table
+# Seed each table
             seed_users()
             seed_places()
             seed_routes()
@@ -360,3 +361,4 @@ def recreate_and_seed_db():
 
 if __name__ == '__main__':
     recreate_and_seed_db()
+# Look at app.db
