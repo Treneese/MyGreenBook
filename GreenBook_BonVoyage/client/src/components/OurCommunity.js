@@ -25,12 +25,11 @@ const OurCommunity = () => {
   }, []);
 
   const fetchReviews = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await axios.get('/api/reviews');
       setReviews(response.data);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
       setError('Failed to fetch reviews. Please try again.');
     } finally {
       setIsLoading(false);
@@ -42,8 +41,7 @@ const OurCommunity = () => {
       const response = await axios.get('/api/profile');
       setCurrentUser(response.data);
     } catch (error) {
-      console.error('Error fetching current user profile:', error);
-      setError('Failed to fetch current user profile. Please try again.');
+      setError('Failed to fetch user profile. Please try again.');
     }
   };
 
@@ -52,7 +50,6 @@ const OurCommunity = () => {
       const response = await axios.get('/api/places');
       setPlaces(response.data);
     } catch (error) {
-      console.error('Error fetching places:', error);
       setError('Failed to fetch places. Please try again.');
     }
   };
@@ -60,6 +57,10 @@ const OurCommunity = () => {
   const handlePostReview = async () => {
     if (!currentUser) {
       alert('You must be logged in to post a review.');
+      return;
+    }
+    if (!newReview.trim() || newRating < 0 || newRating > 5) {
+      alert('Please provide a valid review and rating (0.0 - 5.0).');
       return;
     }
 
@@ -76,7 +77,6 @@ const OurCommunity = () => {
       setNewRating(0);
       setNewPlaceId(null);
     } catch (error) {
-      console.error('Error posting review:', error);
       setError('Failed to post review. Please try again.');
     } finally {
       setIsLoading(false);
@@ -90,7 +90,6 @@ const OurCommunity = () => {
         review.id === reviewId ? { ...review, likes: review.likes + 1 } : review
       ));
     } catch (error) {
-      console.error('Error liking review:', error);
       setError('Failed to like review. Please try again.');
     }
   };
@@ -108,7 +107,6 @@ const OurCommunity = () => {
         review.id === reviewId ? { ...review, comments: [...review.comments, newComment] } : review
       ));
     } catch (error) {
-      console.error('Error adding comment:', error);
       setError('Failed to add comment. Please try again.');
     }
   };
@@ -120,13 +118,12 @@ const OurCommunity = () => {
         review.id === reviewId ? { ...review, content: response.data.content } : review
       ));
     } catch (error) {
-      console.error('Error editing review:', error);
       setError('Failed to edit review. Please try again.');
     }
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="loading-spinner">Loading...</div>; // Update this to a spinner
   }
 
   return (
@@ -149,6 +146,8 @@ const OurCommunity = () => {
                 value={newRating}
                 onChange={(e) => setNewRating(Number(e.target.value))}
                 placeholder="Rating (0.0-5.0)"
+                min="0"
+                max="5"
               />
               <select
                 value={newPlaceId}
@@ -167,7 +166,7 @@ const OurCommunity = () => {
             <p className="login-prompt">You must be logged in to post a review.</p>
           )}
           <div className="reviews">
-          {error && <p className="error">{error}</p>}
+            {error && <p className="error">{error}</p>}
             {reviews.map(review => (
               <ReviewCard 
                 key={review.id} 

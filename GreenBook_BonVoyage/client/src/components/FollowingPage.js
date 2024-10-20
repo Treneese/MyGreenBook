@@ -23,19 +23,25 @@ const FollowingPage = ({ userId }) => {
     fetchFollowing();
   }, [userId]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (isLoading) return <div className="loading-spinner">Loading...</div>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="following-page">
-         <Sidebar />
+      <Sidebar />
       <h1>Following</h1>
-      {following.map(user => (
-        <div key={user.id} className="following-user">
-          <img src={user.profile_picture} alt={user.username} />
-          <p>{user.username}</p>
-        </div>
-      ))}
+      {following.length === 0 ? (
+        <p>No one is being followed.</p>
+      ) : (
+        following.map(user => (
+          <div key={user.id} className="following-user">
+            <img src={user.profile_picture} alt={user.username} />
+            <p>
+              <a href={`/profile/${user.id}`}>{user.username}</a>
+            </p>
+          </div>
+        ))
+      )}
     </div>
   );
 };

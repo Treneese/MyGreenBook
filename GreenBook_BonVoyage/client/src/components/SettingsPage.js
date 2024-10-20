@@ -40,6 +40,11 @@ const SettingsPage = () => {
   };
 
   const handleSaveSettings = async () => {
+    if (!/\S+@\S+\.\S+/.test(settings.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    
     try {
       setIsLoading(true);
       await axios.put('/api/settings', settings);
@@ -52,36 +57,44 @@ const SettingsPage = () => {
     }
   };
 
+  const handleResetSettings = () => {
+    fetchSettings(); // Reset to original settings
+    setMessage('Settings reset to original state.');
+  };
+
   return (
     <div className="settings-page">
-         <Sidebar />
+      <Sidebar />
       <h1>Settings</h1>
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <div className="loading-spinner">Loading...</div>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {message && <p style={{ color: 'green' }}>{message}</p>}
       <div className="settings-form">
-        <label>
+        <label htmlFor="email">
           Email:
           <input
             type="email"
             name="email"
+            id="email"
             value={settings.email}
             onChange={handleInputChange}
           />
         </label>
-        <label>
+        <label htmlFor="notificationsEnabled">
           Enable Notifications:
           <input
             type="checkbox"
             name="notificationsEnabled"
+            id="notificationsEnabled"
             checked={settings.notificationsEnabled}
             onChange={handleInputChange}
           />
         </label>
-        <label>
+        <label htmlFor="privacy">
           Privacy:
           <select
             name="privacy"
+            id="privacy"
             value={settings.privacy}
             onChange={handleInputChange}
           >
@@ -91,9 +104,13 @@ const SettingsPage = () => {
           </select>
         </label>
         <button onClick={handleSaveSettings}>Save Settings</button>
+        <button onClick={handleResetSettings} style={{ marginLeft: '10px' }}>
+          Reset to Default
+        </button>
       </div>
     </div>
   );
 };
+
 
 export default SettingsPage;

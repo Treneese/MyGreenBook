@@ -23,21 +23,28 @@ const FollowersPage = ({ userId }) => {
     fetchFollowers();
   }, [userId]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (isLoading) return <div className="loading-spinner">Loading...</div>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="followers-page">
-         <Sidebar />
+      <Sidebar />
       <h1>Followers</h1>
-      {followers.map(follower => (
-        <div key={follower.id} className="follower">
-          <img src={follower.profile_picture} alt={follower.username} />
-          <p>{follower.username}</p>
-        </div>
-      ))}
+      {followers.length === 0 ? (
+        <p>No followers yet.</p>
+      ) : (
+        followers.map(follower => (
+          <div key={follower.id} className="follower">
+            <img src={follower.profile_picture} alt={follower.username} />
+            <p>
+              <a href={`/profile/${follower.id}`}>{follower.username}</a>
+            </p>
+          </div>
+        ))
+      )}
     </div>
   );
 };
+
 
 export default FollowersPage;

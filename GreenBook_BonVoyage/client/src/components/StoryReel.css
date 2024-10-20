@@ -1,0 +1,21 @@
+.story-reel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .story {
+    position: relative;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    width: 100%;
+    margin: 20px 0;
+  }
+  
+  .story-user {
+    text-align: center;
+    margin-top: 5px;
+  }
+  

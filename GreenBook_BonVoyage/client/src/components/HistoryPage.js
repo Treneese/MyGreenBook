@@ -28,10 +28,11 @@ const HistoryPage = () => {
 
   return (
     <div className="history-page">
-        <Sidebar />
+      <Sidebar />
       <h1>Activity History</h1>
-      {isLoading && <div>Loading...</div>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {isLoading && <div className="loading-spinner">Loading...</div>} {/* Add spinner here */}
+      {error && <p className="error">{error}</p>}
+      {activities.length === 0 && !isLoading && <p>No activities found.</p>}
       <ul>
         {activities.map(activity => (
           <li key={activity.id} className="activity-item">

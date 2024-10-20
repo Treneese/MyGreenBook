@@ -23,20 +23,38 @@ const StoryReel = () => {
     }
   };
 
+  const handleRetry = () => {
+    setError('');
+    setIsLoading(true);
+    fetchStories();
+  };
+
   return (
     <div className="story-reel">
       {isLoading && <div className="loading">Loading...</div>}
-      {error && <p className="error">{error}</p>}
-      {stories.length === 0 && !isLoading && !error && <p>No stories available.</p>}
+      {error && (
+        <div className="error">
+          <p>{error}</p>
+          <button onClick={handleRetry}>Retry</button>
+        </div>
+      )}
+      {stories.length === 0 && !isLoading && !error && 
+      <p>No stories available.</p>}
       {stories.map(story => (
         <div key={story.id} className="story">
-          <img src={story.media} alt={`Story ${story.id}`} />
-          {/* Displaying user information; assumes user info is included in story data */}
-          {/* If not, you would need to modify the backend or fetch user info separately */}
+          <img 
+            src={story.media} 
+            alt={`Story ${story.id}`} 
+            // onError={(e) => { e.target.onerror = null; e.target.src='/public/travelstory.png'; }} 
+          />
           {story.user && (
             <div className="story-user">
               <p>{story.user.name}</p>
-              <img src={story.user.image} alt={`User ${story.user.name}`} />
+              <img 
+                src={story.user.image} 
+                alt={`User ${story.user.name}`} 
+                // onError={(e) => { e.target.onerror = null; e.target.src='/public/travelstory.png'; }} 
+              />
             </div>
           )}
         </div>

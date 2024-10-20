@@ -28,10 +28,13 @@ const NotificationsPage = () => {
 
   return (
     <div className="notifications-page">
-         <Sidebar />
+      <Sidebar />
       <h1>Notifications</h1>
-      {isLoading && <div>Loading...</div>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {isLoading && <div className="loading-spinner">Loading...</div>} {/* Add spinner here */}
+      {error && <p className="error">{error}</p>}
+      {notifications.length === 0 && !isLoading && !error && (
+        <p>No notifications available.</p> // Empty state message
+      )}
       <ul>
         {notifications.map(notification => (
           <li key={notification.id} className="notification-item">

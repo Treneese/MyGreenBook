@@ -63,6 +63,7 @@ const MessagesPage = () => {
       });
       setNewConversationUser(null);
       fetchConversations(); // Refresh the conversations list
+      alert('Conversation started successfully!'); // User feedback
     } catch (error) {
       console.error('Error starting conversation:', error);
       setError('Failed to start a new conversation. Please try again.');
@@ -83,9 +84,10 @@ const MessagesPage = () => {
       </div>
       <div className="messages-content">
         <h1>Messages</h1>
-        {isLoading && <div>Loading...</div>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {selectedConversation && messages.length === 0 && !isLoading && <p>No messages found.</p>}
+        {isLoading && <div className="loading-spinner">Loading...</div>} {/* Add spinner here */}
+        {error && <p className="error">{error}</p>}
+        {!selectedConversation && !isLoading && <p>Select a conversation to view messages.</p>}
+        {selectedConversation && messages.length === 0 && !isLoading && <p>No messages found in this conversation.</p>}
         {messages.map((message, idx) => (
           <div key={idx} className="message">
             <p><strong>{message.sender}:</strong> {message.content}</p>
